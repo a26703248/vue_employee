@@ -11,6 +11,9 @@ export const useJwtStore = defineStore('token', {
   action: {
     setJwtToken(value){
       this.jwtToken = value;
+    },
+    resetJwtToken(){
+      this.jwtToken = "";
     }
   }
 })

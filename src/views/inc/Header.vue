@@ -1,6 +1,9 @@
 <script setup>
 import { ArrowDown} from "@element-plus/icons-vue";
 import { reactive, ref, getCurrentInstance, onBeforeMount} from 'vue'
+import {useJwtStore} from "@/stores/token.js";
+import { useRouter } from 'vue-router'
+
 let userInfo = reactive({
   id:-1,
   username:"",
@@ -13,6 +16,18 @@ function getUserInfo(){
   instance.proxy.$request("/sys/userInfo").then(res => {
     userInfo = res.data.data;
   })
+}
+function logout(){
+  let instance = getCurrentInstance();
+  const router = useRouter();
+
+  router.push("/login");
+  // TODO 待測試
+  // instance.proxy.$request.post("/logout").then(res => {
+  //   localStorage.clear();
+  //   sessionStorage.clear();
+  //   useJwtStore.resetJwtToken();
+  // })
 }
 
 onBeforeMount(() => {
@@ -42,7 +57,7 @@ onBeforeMount(() => {
             <el-dropdown-item>休假資訊</el-dropdown-item>
           <!-- </RouterLink> -->
           <RouterLink to="/logout">
-            <el-dropdown-item>登出</el-dropdown-item>
+            <el-dropdown-item @click.prevent.stop="logout">登出</el-dropdown-item>
           </RouterLink>
         </el-dropdown-menu>
       </template>

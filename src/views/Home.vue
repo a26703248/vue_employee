@@ -27,22 +27,22 @@ import Header from "@/views/inc/Header.vue";
 #container {
   height: 100vh;
 }
+
 .el-header {
-  background-color: #17b3a3;
-  color: #333;
+  background-color: var(--light-green);
+  color: var(--black);
   text-align: center;
   line-height: 60px;
 }
 
 .el-aside {
-  background-color: #d3dce6;
   color: #333;
   line-height: 200px;
 }
 
 .el-main {
-  background-color: #e9eef3;
-  color: #333;
+  background-color: var(--grey);
+  color: var(--black);
   text-align: center;
   line-height: 160px;
 }
