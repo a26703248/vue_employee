@@ -1,8 +1,9 @@
 <script setup>
 import { ArrowDown} from "@element-plus/icons-vue";
-import { reactive, ref, getCurrentInstance, onBeforeMount} from 'vue'
+import { reactive, ref, onBeforeMount} from 'vue'
 import {useTokenStore} from "@/stores/token.js";
 import { useRouter } from 'vue-router'
+import http from "@/axios/index.js"
 
 const router = useRouter();
 
@@ -14,17 +15,15 @@ let userInfo = reactive({
 
 // TODO 帳號訊息帶出測試
 function getUserInfo(){
-  let instance = getCurrentInstance();
-  instance.proxy.$request("/sys/userInfo").then(res => {
+  http.get("/sys/userInfo").then(res => {
     userInfo = res.data.data;
   })
 }
 
 function logout(){
-  let instance = getCurrentInstance();
   router.push("/login");
   // TODO 待測試
-  // instance.proxy.$request.post("/logout").then(res => {
+  // http.post("/logout").then(res => {
   //   localStorage.clear();
   //   sessionStorage.clear();
   //   useTokenStore.resetJwtToken();

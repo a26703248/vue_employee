@@ -33,10 +33,11 @@
 </template>
 
 <script setup>
-import { reactive, ref, getCurrentInstance} from 'vue'
+import { reactive, ref} from 'vue'
 import { useRouter } from 'vue-router'
 import VueLogo from "@/assets/logo.svg"
 import {useTokenStore} from "@/stores/token.js"
+import http from "@/axios/index.js"
 
 const router = useRouter();
 const loginFormRef = ref();
@@ -53,7 +54,6 @@ const loginRules = reactive({
     { required: true, message: '請輸入密碼', trigger: 'blur' },
   ],
 })
-const instance = getCurrentInstance();
 
 const submitForm = async (formEl) => {
   if (!formEl) return
@@ -62,7 +62,8 @@ const submitForm = async (formEl) => {
     if (valid) {
       router.push("/index");
     // TODO 待測試
-      // instance.proxy.$request.post("/login", res => {
+
+      // http.post("/login", res => {
       //   const jwt = useTokenStore();
       //   jwt.setJwtToken(res.headers["authorization"]);
       //   router.push("/index");
@@ -78,15 +79,19 @@ const resetForm = (formEl) => {
   if (!formEl) return
   formEl.resetFields()
 }
+
 </script>
 
 <style>
-#login-container {
+
+body{
   background-image: url("@/assets/login-background.jpg");
   background-repeat: no-repeat;
-  padding-top: 200px;
-  height:100vh;
   background-size: cover;
+}
+
+#login-container {
+  padding-top: 200px;
 }
 
 .login-logo {

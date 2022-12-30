@@ -8,21 +8,45 @@ import {
   Lock,
   UserFilled,
 } from "@element-plus/icons-vue";
-import { reactive, ref, getCurrentInstance} from 'vue'
-import { useRouter } from 'vue-router'
+import { reactive, ref, getCurrentInstance } from "vue";
+import { useRouter } from "vue-router";
 
 // TODO 動態顯示欄位
 const menuList = reactive([
-  // {
-  //   title:"系統管理",
-  //   name:"SystemMana",
-  //   icon:"",
-  //   path:"",
-  //   children:[
-  //   ]
-  // }
-])
-
+  {
+    title: "帳戶管理",
+    name: "AccountMana",
+    icon: Setting,
+    path: "",
+    children: [
+      {
+        title: "帳戶設定",
+        name: "AccountSetting",
+        icon: UserFilled,
+        path: "/sys/user",
+      },
+      {
+        title: "權限設定",
+        name: "RoleSetting",
+        icon: Lock,
+        path: "/sys/roles",
+      },
+      {
+        title: "選單設定",
+        name: "MenuSetting",
+        icon: Document,
+        path: "/sys/menu",
+      },
+    ],
+  },
+  {
+    title: "系統工具",
+    name: "SystemTool",
+    icon: Operation,
+    path: "",
+    children: [],
+  },
+]);
 </script>
 
 <template>
@@ -40,7 +64,24 @@ const menuList = reactive([
       </el-menu-item>
     </RouterLink>
 
-    <el-sub-menu index="1">
+    <el-sub-menu :index="menu.name" v-for="menu in menuList" :key="menu.name">
+      <template #title>
+        <el-icon>
+          <component :is="menu.icon"/>
+        </el-icon>
+        <span>{{menu.title}}</span>
+      </template>
+      <RouterLink :to="children.path" v-for="children in menu.children" :key="children.name">
+        <el-menu-item :index="children.name">
+          <el-icon>
+            <component :is="children.icon"/>
+          </el-icon>
+          <template #title>{{children.title}}</template>
+        </el-menu-item>
+      </RouterLink>
+    </el-sub-menu>
+
+    <!-- <el-sub-menu index="1">
       <template #title>
         <el-icon><setting /></el-icon>
         <span>帳戶管理</span>
@@ -53,8 +94,8 @@ const menuList = reactive([
       </RouterLink>
       <RouterLink to="/sys/roles">
         <el-menu-item index="2-2">
-          <el-icon><UserFilled /></el-icon>
-          <template #title>權限設定</template>
+            <el-icon><UserFilled /></el-icon>
+            <template #title>權限設定</template>
         </el-menu-item>
       </RouterLink>
       <RouterLink to="/sys/menu">
@@ -70,7 +111,7 @@ const menuList = reactive([
         <el-icon><operation /></el-icon>
         <span>系統工具</span>
       </template>
-    </el-sub-menu>
+    </el-sub-menu> -->
   </el-menu>
 </template>
 

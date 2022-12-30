@@ -6,7 +6,6 @@ import router from "./router";
 
 import ElementPlus from "element-plus";
 import "element-plus/dist/index.css";
-import CusRequest from "@/axios/index.js";
 
 import "./assets/main.css";
 
@@ -18,5 +17,4 @@ app
 .use(router)
 .use(ElementPlus);
 
-app.config.globalProperties.$request = CusRequest;
 app.mount("#app");

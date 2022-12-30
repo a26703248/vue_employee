@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Home from "../views/Home.vue"
-import Index from "../views/Index.vue"
+import Home from "@/views/Home.vue"
+import Index from "@/views/Index.vue"
+import http from "@/axios/index.js"
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -44,5 +46,18 @@ const router = createRouter({
     }
   ]
 })
+// TODO 測試
+// router.beforeEach((to, form, next) => {
+//   http.get("/sys/main/nav", {
+//     header:{
+//       Authorization: localStorage.getItem("token")
+//     }
+//   }).then(resp => {
+//     // 取得 menuList
+
+//     // 判斷是否有權限
+//   })
+//   next();
+// })
 
 export default router

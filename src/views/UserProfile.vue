@@ -98,6 +98,7 @@
 
 <script setup>
 import { reactive, ref, getCurrentInstance } from "vue";
+import http from "@/axios/index.js"
 
 function validateRepeatPassword(rule, val, callback){
   console.log(val);
@@ -151,7 +152,7 @@ const submitForm = async (formEl) => {
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
     if (valid) {
-      instance.proxy.$request.post("/user/update", (res) => {
+      http.post("/user/update", (res) => {
         router.push("/login");
       });
     } else {
