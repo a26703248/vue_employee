@@ -1,8 +1,10 @@
 <script setup>
 import { ArrowDown} from "@element-plus/icons-vue";
 import { reactive, ref, getCurrentInstance, onBeforeMount} from 'vue'
-import {useJwtStore} from "@/stores/token.js";
+import {useTokenStore} from "@/stores/token.js";
 import { useRouter } from 'vue-router'
+
+const router = useRouter();
 
 let userInfo = reactive({
   id:-1,
@@ -17,21 +19,20 @@ function getUserInfo(){
     userInfo = res.data.data;
   })
 }
+
 function logout(){
   let instance = getCurrentInstance();
-  const router = useRouter();
-
   router.push("/login");
   // TODO 待測試
   // instance.proxy.$request.post("/logout").then(res => {
   //   localStorage.clear();
   //   sessionStorage.clear();
-  //   useJwtStore.resetJwtToken();
+  //   useTokenStore.resetJwtToken();
   // })
 }
 
 onBeforeMount(() => {
-  getUserInfo();
+  // getUserInfo();
 })
 
 </script>
@@ -56,9 +57,7 @@ onBeforeMount(() => {
           <!-- <RouterLink to="/userProfile"> -->
             <el-dropdown-item>休假資訊</el-dropdown-item>
           <!-- </RouterLink> -->
-          <RouterLink to="/logout">
-            <el-dropdown-item @click.prevent.stop="logout">登出</el-dropdown-item>
-          </RouterLink>
+          <el-dropdown-item @click.prevent.stop="logout()">登出</el-dropdown-item>
         </el-dropdown-menu>
       </template>
     </el-dropdown>

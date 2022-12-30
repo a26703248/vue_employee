@@ -36,7 +36,7 @@
 import { reactive, ref, getCurrentInstance} from 'vue'
 import { useRouter } from 'vue-router'
 import VueLogo from "@/assets/logo.svg"
-import {useJwtStore} from "@/stores/token.js"
+import {useTokenStore} from "@/stores/token.js"
 
 const router = useRouter();
 const loginFormRef = ref();
@@ -63,7 +63,7 @@ const submitForm = async (formEl) => {
       router.push("/index");
     // TODO 待測試
       // instance.proxy.$request.post("/login", res => {
-      //   const jwt = useJwtStore();
+      //   const jwt = useTokenStore();
       //   jwt.setJwtToken(res.headers["authorization"]);
       //   router.push("/index");
       // })

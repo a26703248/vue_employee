@@ -7,20 +7,35 @@
         :model="loginProfileForm"
         :rules="loginProfileRules"
         label-width="120px"
-        class="demo-ruleForm"
+        class="account-form"
         status-icon
         size="large"
       >
         <el-form-item label="使用者帳號" prop="username">
-          {{ loginProfileForm.username?loginProfileForm.username:"test" }}
+          {{ loginProfileForm.username ? loginProfileForm.username : "test" }}
         </el-form-item>
-        <el-form-item label="密碼" type="password" prop="password">
-          <el-input v-model="loginProfileForm.password" />
+        <el-form-item label="舊密碼" prop="oldPassword">
+          <el-input
+            v-model="loginProfileForm.oldPassword"
+            type="password"
+            show-password
+          />
         </el-form-item>
-        <el-form-item label="確認密碼" type="password" prop="password">
-          <el-input v-model="loginProfileForm.repeat_password" />
+        <el-form-item label="新密碼" prop="newPassword">
+          <el-input
+            v-model="loginProfileForm.newPassword"
+            type="password"
+            show-password
+          />
         </el-form-item>
-        <el-form-item>
+        <el-form-item label="確認新密碼" prop="repeatNewPassword">
+          <el-input
+            v-model="loginProfileForm.repeatNewPassword"
+            type="password"
+            show-password
+          />
+        </el-form-item>
+        <el-form-item class="submit-button">
           <el-button
             type="primary"
             @click="submitForm(loginProfileFormRef)"
@@ -38,7 +53,7 @@
         :model="profileForm"
         :rules="profileRules"
         label-width="120px"
-        class="demo-ruleForm"
+        class="detail-form"
         status-icon
         size="large"
       >
@@ -46,19 +61,19 @@
           {{ profileForm.employeeId }}
         </el-form-item>
         <el-form-item label="部門" prop="department">
-          {{ profileForm.department}}
+          {{ profileForm.department }}
         </el-form-item>
         <el-form-item label="職務" prop="jobName">
           {{ profileForm.jobName }}
         </el-form-item>
         <el-form-item label="性別" prop="gender">
-          {{ profileForm.gender === "male"? '男性':"女性"}}
+          {{ profileForm.gender === "male" ? "男性" : "女性" }}
         </el-form-item>
         <el-form-item label="座位電話" prop="seatTel">
-          {{ profileForm.seatTel}}
+          {{ profileForm.seatTel }}
         </el-form-item>
         <el-form-item label="座位電話" prop="seatTel">
-          {{ profileForm.seatTel}}
+          {{ profileForm.seatTel }}
         </el-form-item>
 
         <el-form-item label="email" prop="email">
@@ -71,16 +86,11 @@
           </el-col>
         </el-form-item>
 
-        <el-form-item>
-          <el-button
-            type="primary"
-            @click="submitForm(profileFormRef)"
-            class="form-button"
-          >
+        <el-form-item class="submit-button">
+          <el-button type="primary" @click="submitForm(profileFormRef)">
             送出
           </el-button>
         </el-form-item>
-
       </el-form>
     </div>
   </div>
@@ -88,30 +98,46 @@
 
 <script setup>
 import { reactive, ref, getCurrentInstance } from "vue";
+
+function validateRepeatPassword(rule, val, callback){
+  console.log(val);
+  if(val === ""){
+    return callback(new Error("確認新密碼是否錯誤"));
+  }
+  if(val == loginProfileForm.newPassword){
+    callback();
+  }else{
+    return callback(new Error("密碼不一致"));
+  }
+}
+
 const loginProfileFormRef = ref();
 const loginProfileForm = reactive({
   username: "",
-  password: "",
+  oldPassword: "",
+  newPassword: "",
+  repeatNewPassword: "",
 });
 
 const loginProfileRules = reactive({
   username: [{ required: true, message: "請輸入帳號", trigger: "blur" }],
-  password: [{ required: true, message: "請輸入密碼", trigger: "blur" }],
+  oldPassword: [{ required: true, message: "請輸入密碼", trigger: "blur" }],
+  newPassword: [{ required: true, message: "請輸入密碼", trigger: "blur" }],
+  repeatNewPassword: [{validator: validateRepeatPassword, trigger: "blur" }],
 });
 
 const profileFormRef = ref();
 
 const profileForm = reactive({
-  employeeId:-1,
+  employeeId: -1,
   department: "資訊部門",
   jobName: "工程師",
   gender: "male",
   seatTel: "04",
   mobile: "0912345678",
-  jobStartDate:"2022-02-01",
-  email:"XXX@gmail.com",
+  jobStartDate: "2022-02-01",
+  email: "XXX@gmail.com",
 });
-
 
 const profileRules = reactive({
   username: [{ required: true, message: "請輸入帳號", trigger: "blur" }],
@@ -140,7 +166,10 @@ const resetForm = (formEl) => {
 };
 </script>
 
-<style scoped>
+<style>
+.submit-button .el-form-item__content {
+  justify-content: flex-end;
+}
 
 .profile-form {
   width: 100%;
@@ -148,8 +177,10 @@ const resetForm = (formEl) => {
   justify-content: space-around;
 }
 .profile-form .form {
-  padding:0 30px 0 30px;
+  padding: 0 30px 0 30px;
   width: 50%;
+  display: flex;
+  justify-content: center;
 }
 .page-title {
   font-size: 36px;

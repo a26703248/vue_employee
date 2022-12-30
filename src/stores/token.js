@@ -1,7 +1,7 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 
-export const useJwtStore = defineStore('token', {
+export const useTokenStore = defineStore('token', {
   state: () => ({
     jwtToken: "",
   }),
