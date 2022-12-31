@@ -7,7 +7,7 @@ export const tokenStore = defineStore("token", () => {
     token.value = value;
   }
   function resetToken() {
-    token = "";
+    token.value = "";
   }
   return {
     token,

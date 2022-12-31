@@ -21,7 +21,7 @@
           <el-form-item label="密碼" prop="password">
             <el-input v-model="loginForm.password"  type="password" show-password/>
           </el-form-item>
-          <el-form-item>
+          <el-form-item class="login-button">
             <el-button type="primary" @click="submitForm(loginFormRef)">
               登入
             </el-button>
@@ -104,7 +104,7 @@ body{
   margin-bottom: 50px;
 }
 
-.el-form-item:nth-child(3) .el-form-item__content {
+.el-form-item__content {
   justify-content: center;
 }
 </style>

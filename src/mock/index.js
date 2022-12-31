@@ -1,6 +1,6 @@
 let RESULT = {
   code: 200,
-  msg: "",
+  msg: "error",
   data: {},
 };
 export default [
@@ -46,6 +46,27 @@ export default [
     url: "/user/logout",
     method: "post",
     response: () => {
+      return RESULT;
+    },
+  },
+  {
+    url: "/user/update/profile",
+    method: "post",
+    response: () => {
+      RESULT.data = {
+        page:'profile'
+      }
+      return RESULT;
+    },
+  },
+  {
+    url: "/user/update/account1",
+    method: "post",
+    response: () => {
+      RESULT.code = 404;
+      RESULT.data = {
+        page:'account'
+      }
       return RESULT;
     },
   },

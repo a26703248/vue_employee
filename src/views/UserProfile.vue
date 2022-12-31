@@ -38,7 +38,7 @@
         <el-form-item class="submit-button">
           <el-button
             type="primary"
-            @click="submitForm(loginProfileFormRef)"
+            @click="submitForm(loginProfileFormRef, 'account')"
             class="form-button"
           >
             送出
@@ -76,11 +76,14 @@
           {{ profileForm.mobile }}
         </el-form-item>
         <el-form-item label="Email" prop="email">
-          <el-input v-model="profileForm.email"/>
+          <el-input v-model="profileForm.email" />
         </el-form-item>
 
         <el-form-item class="submit-button">
-          <el-button type="primary" @click="submitForm(profileFormRef)">
+          <el-button
+            type="primary"
+            @click="submitForm(profileFormRef, 'profile')"
+          >
             送出
           </el-button>
         </el-form-item>
@@ -94,6 +97,7 @@ import { reactive, ref, onBeforeMount } from "vue";
 import http from "@/axios/index.js";
 import { userAccountStore } from "@/stores/user.js";
 import { storeToRefs } from "pinia";
+import { ElMessage } from "element-plus";
 
 // login
 const account = userAccountStore();
@@ -148,25 +152,36 @@ const profileRules = reactive({
   ],
 });
 
-// TODO 表單請求送出測試
-const submitForm = async (formEl) => {
+// function
+const submitForm = async (formEl, formName) => {
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
     if (valid) {
-      http.post("/user/update", (res) => {
-        router.push("/login");
-      });
+      switch (formName) {
+        case "account":
+          http.post("/user/update/account", (res) => {
+            console.log(res.data.page);
+            router.push("/login");
+          });
+          break;
+        case "profile":
+          http.post("/user/update/profile", (res) => {
+            console.log(res.data.page);
+            router.push("/login");
+          });
+          break;
+      }
     } else {
       console.log("error submit!", fields);
     }
   });
 };
 
-function getUserProfile(id){
+function getUserProfile(id) {
   http.post("/user/info", id).then((res) => {
-    Object.entries(res.data).forEach(obj =>{
+    Object.entries(res.data).forEach((obj) => {
       profileForm[obj[0]] = obj[1];
-    })
+    });
   });
 }
 
@@ -203,5 +218,9 @@ onBeforeMount(() => {
 .el-divider {
   height: 500px;
   border-width: 1px;
+}
+
+.el-form-item__content {
+  justify-content: center;
 }
 </style>

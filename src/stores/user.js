@@ -3,7 +3,7 @@ import { reactive, ref, onBeforeMount } from "vue";
 
 export const userAccountStore = defineStore("userAccount", () => {
   const userAccount = reactive({
-    avatar:"",
+    avatar: "",
     username: "",
     isAdmin: false,
     role: [],
@@ -15,7 +15,7 @@ export const userAccountStore = defineStore("userAccount", () => {
     setIsAdmin(value.isAdmin);
     setUsername(value.username);
   }
-  function setAvatar(value){
+  function setAvatar(value) {
     userAccount.avatar = value;
   }
   function setRole(value) {
@@ -30,6 +30,13 @@ export const userAccountStore = defineStore("userAccount", () => {
   function setUsername(value) {
     userAccount.username = value;
   }
+  function resetUserAccount() {
+    userAccount.avatar;
+    userAccount.username = "";
+    userAccount.isAdmin = false;
+    userAccount.role = [];
+    userAccount.views = [];
+  }
   return {
     userAccount,
     setAvatar,
@@ -38,5 +45,6 @@ export const userAccountStore = defineStore("userAccount", () => {
     setViews,
     setIsAdmin,
     setUsername,
+    resetUserAccount,
   };
 });

@@ -10,12 +10,16 @@ import http from "@/axios/index.js";
 const router = useRouter();
 const account = userAccountStore();
 const {userAccount} = storeToRefs(account)
+const {resetUserAccount} = account;
+const token = tokenStore();
+const {resetToken} = token;
 
 function logout() {
   http.post("/user/logout").then((res) => {
     localStorage.clear();
     sessionStorage.clear();
-    tokenStore.resetToken();
+    resetToken();
+    resetUserAccount();
     router.push("/login");
   });
 }
