@@ -11,8 +11,8 @@
         status-icon
         size="large"
       >
-        <el-form-item label="使用者帳號" prop="username">
-          {{ loginProfileForm.username ? loginProfileForm.username : "test" }}
+        <el-form-item label="使用者帳號">
+          {{ userAccount.username }}
         </el-form-item>
         <el-form-item label="舊密碼" prop="oldPassword">
           <el-input
@@ -72,18 +72,11 @@
         <el-form-item label="座位電話" prop="seatTel">
           {{ profileForm.seatTel }}
         </el-form-item>
-        <el-form-item label="座位電話" prop="seatTel">
-          {{ profileForm.seatTel }}
+        <el-form-item label="行動電話" prop="mobile">
+          {{ profileForm.mobile }}
         </el-form-item>
-
-        <el-form-item label="email" prop="email">
-          <el-col :span="11">
-            <el-input v-model="profileForm.password" />
-          </el-col>
-          <el-col :span="1"> @ </el-col>
-          <el-col :span="12">
-            <el-input v-model="profileForm.password" />
-          </el-col>
+        <el-form-item label="Email" prop="email">
+          <el-input v-model="profileForm.email"/>
         </el-form-item>
 
         <el-form-item class="submit-button">
@@ -97,43 +90,63 @@
 </template>
 
 <script setup>
-import { reactive, ref, getCurrentInstance } from "vue";
-import http from "@/axios/index.js"
-import {userProfileStore, userAccountStore} from "@/src/store/user.js"
+import { reactive, ref, onBeforeMount } from "vue";
+import http from "@/axios/index.js";
+import { userAccountStore } from "@/stores/user.js";
+import { storeToRefs } from "pinia";
 
-function validateRepeatPassword(rule, val, callback){
-  console.log(val);
-  if(val === ""){
-    return callback(new Error("確認新密碼是否錯誤"));
-  }
-  if(val == loginProfileForm.newPassword){
-    callback();
-  }else{
-    return callback(new Error("密碼不一致"));
-  }
-}
-
+// login
+const account = userAccountStore();
+const { userAccount } = storeToRefs(account);
 const loginProfileFormRef = ref();
-const userAccount = userAccountStore();
 const loginProfileForm = reactive({
-  username: userAccount.username,
   oldPassword: "",
   newPassword: "",
   repeatNewPassword: "",
 });
-
 const loginProfileRules = reactive({
-  username: [{ required: true, message: "請輸入帳號", trigger: "blur" }],
   oldPassword: [{ required: true, message: "請輸入密碼", trigger: "blur" }],
   newPassword: [{ required: true, message: "請輸入密碼", trigger: "blur" }],
-  repeatNewPassword: [{validator: validateRepeatPassword, trigger: "blur" }],
+  repeatNewPassword: [{ validator: validateRepeatPassword, trigger: "blur" }],
 });
+function validateRepeatPassword(rule, val, callback) {
+  console.log(val);
+  if (val === "") {
+    return callback(new Error("確認新密碼是否錯誤"));
+  }
+  if (val == loginProfileForm.newPassword) {
+    callback();
+  } else {
+    return callback(new Error("密碼不一致"));
+  }
+}
 
+// profile
 const profileFormRef = ref();
-
-const profileForm = useUserProfileStore();
-
-const instance = getCurrentInstance();
+const profileForm = reactive({
+  employeeId: 0,
+  department: "",
+  jobName: "",
+  gender: "",
+  seatTel: "",
+  mobile: "",
+  jobStartDate: "",
+  email: "",
+});
+const profileRules = reactive({
+  email: [
+    {
+      required: true,
+      message: "Email 信箱必填",
+      trigger: "blur",
+    },
+    {
+      type: "email",
+      message: "Email信箱格式錯誤",
+      trigger: ["blur", "change"],
+    },
+  ],
+});
 
 // TODO 表單請求送出測試
 const submitForm = async (formEl) => {
@@ -149,10 +162,18 @@ const submitForm = async (formEl) => {
   });
 };
 
-const resetForm = (formEl) => {
-  if (!formEl) return;
-  formEl.resetFields();
-};
+function getUserProfile(id){
+  http.post("/user/info", id).then((res) => {
+    Object.entries(res.data).forEach(obj =>{
+      profileForm[obj[0]] = obj[1];
+    })
+  });
+}
+
+onBeforeMount(() => {
+  let id = -1;
+  getUserProfile(id);
+});
 </script>
 
 <style>

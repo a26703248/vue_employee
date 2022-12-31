@@ -1,13 +1,15 @@
 <script setup>
 import { ArrowDown } from "@element-plus/icons-vue";
-import { reactive, ref, onBeforeMount } from "vue";
+import { reactive, ref } from "vue";
 import { userAccountStore } from "@/stores/user.js";
+import { storeToRefs } from "pinia";
 import { tokenStore } from "@/stores/token.js";
 import { useRouter } from "vue-router";
 import http from "@/axios/index.js";
 
 const router = useRouter();
-const userAccount = userAccountStore();
+const account = userAccountStore();
+const {userAccount} = storeToRefs(account)
 
 function logout() {
   http.post("/user/logout").then((res) => {

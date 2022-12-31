@@ -12,11 +12,10 @@ export default [
     },
   },
   {
-    url: "/userProfile",
-    method: "get",
+    url: "/user/info",
+    method: "post",
     response: () => {
       RESULT.data = {
-        avatar: "#",
         employeeId: -1,
         department: "資訊部門",
         jobName: "工程師",
@@ -34,6 +33,7 @@ export default [
     method: "post",
     response: () => {
       RESULT.data = {
+        avatar: "#",
         username: "test",
         role: ["admin"],
         token: "aaa",

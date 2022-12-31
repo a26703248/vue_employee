@@ -20,22 +20,22 @@ const router = createRouter({
         {
           path: '/userProfile',
           name: 'userProfile',
-          component: () => import("../views/UserProfile.vue")
+          component: () => import("@/views/UserProfile.vue")
         },
         {
           path: '/sys/menu',
           name: 'SysMenu',
-          component: () => import("../views/sys/Menu.vue")
+          component: () => import("@/views/sys/Menu.vue")
         },
         {
           path: '/sys/user',
           name: 'SysUser',
-          component: () => import("../views/sys/User.vue")
+          component: () => import("@/views/sys/User.vue")
         },
         {
           path: '/sys/roles',
           name: 'SysRole',
-          component: () => import("../views/sys/Roles.vue")
+          component: () => import("@/views/sys/Roles.vue")
         },
       ]
     },

@@ -18,7 +18,7 @@
           <el-form-item label="帳號" prop="username">
             <el-input v-model="loginForm.username" />
           </el-form-item>
-          <el-form-item label="密碼">
+          <el-form-item label="密碼" prop="password">
             <el-input v-model="loginForm.password"  type="password" show-password/>
           </el-form-item>
           <el-form-item>
@@ -37,13 +37,12 @@ import { reactive, ref} from 'vue'
 import { useRouter } from 'vue-router'
 import VueLogo from "@/assets/logo.svg"
 import {tokenStore} from "@/stores/token.js"
-import {userAccountStore,userProfileStore} from "@/stores/user.js"
+import {userAccountStore} from "@/stores/user.js"
 import http from "@/axios/index.js"
 
 // account
 const token = tokenStore();
 const userAccount = userAccountStore();
-const userProfile = userProfileStore();
 
 // roter
 const router = useRouter();
@@ -71,7 +70,6 @@ const submitForm = async (formEl) => {
       http.post("/user/login", loginForm).then(res => {
         token.setToken(res.data.token);
         userAccount.setUser(res.data);
-        userProfile.setUserProfile(res.data)
         router.push("/index");
       })
 

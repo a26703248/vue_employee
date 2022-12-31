@@ -8,7 +8,7 @@ import {
   Lock,
   UserFilled,
 } from "@element-plus/icons-vue";
-import { reactive, ref, getCurrentInstance } from "vue";
+import { reactive, ref, shallowRef } from "vue";
 import { useRouter } from "vue-router";
 
 // TODO 動態顯示欄位
@@ -16,25 +16,25 @@ const menuList = reactive([
   {
     title: "帳戶管理",
     name: "AccountMana",
-    icon: Setting,
+    icon: shallowRef(Setting),
     path: "",
     children: [
       {
         title: "帳戶設定",
         name: "AccountSetting",
-        icon: UserFilled,
+        icon: shallowRef(UserFilled),
         path: "/sys/user",
       },
       {
         title: "權限設定",
         name: "RoleSetting",
-        icon: Lock,
+        icon: shallowRef(Lock),
         path: "/sys/roles",
       },
       {
         title: "選單設定",
         name: "MenuSetting",
-        icon: Document,
+        icon: shallowRef(Document),
         path: "/sys/menu",
       },
     ],
@@ -42,7 +42,7 @@ const menuList = reactive([
   {
     title: "系統工具",
     name: "SystemTool",
-    icon: Operation,
+    icon: shallowRef(Operation),
     path: "",
     children: [],
   },
