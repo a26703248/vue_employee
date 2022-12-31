@@ -99,6 +99,7 @@
 <script setup>
 import { reactive, ref, getCurrentInstance } from "vue";
 import http from "@/axios/index.js"
+import {userProfileStore, userAccountStore} from "@/src/store/user.js"
 
 function validateRepeatPassword(rule, val, callback){
   console.log(val);
@@ -113,8 +114,9 @@ function validateRepeatPassword(rule, val, callback){
 }
 
 const loginProfileFormRef = ref();
+const userAccount = userAccountStore();
 const loginProfileForm = reactive({
-  username: "",
+  username: userAccount.username,
   oldPassword: "",
   newPassword: "",
   repeatNewPassword: "",
@@ -129,21 +131,7 @@ const loginProfileRules = reactive({
 
 const profileFormRef = ref();
 
-const profileForm = reactive({
-  employeeId: -1,
-  department: "資訊部門",
-  jobName: "工程師",
-  gender: "male",
-  seatTel: "04",
-  mobile: "0912345678",
-  jobStartDate: "2022-02-01",
-  email: "XXX@gmail.com",
-});
-
-const profileRules = reactive({
-  username: [{ required: true, message: "請輸入帳號", trigger: "blur" }],
-  password: [{ required: true, message: "請輸入密碼", trigger: "blur" }],
-});
+const profileForm = useUserProfileStore();
 
 const instance = getCurrentInstance();
 

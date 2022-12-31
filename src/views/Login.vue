@@ -36,10 +36,19 @@
 import { reactive, ref} from 'vue'
 import { useRouter } from 'vue-router'
 import VueLogo from "@/assets/logo.svg"
-import {useTokenStore} from "@/stores/token.js"
+import {tokenStore} from "@/stores/token.js"
+import {userAccountStore,userProfileStore} from "@/stores/user.js"
 import http from "@/axios/index.js"
 
+// account
+const token = tokenStore();
+const userAccount = userAccountStore();
+const userProfile = userProfileStore();
+
+// roter
 const router = useRouter();
+
+// form
 const loginFormRef = ref();
 const loginForm = reactive({
   username: '',
@@ -58,16 +67,13 @@ const loginRules = reactive({
 const submitForm = async (formEl) => {
   if (!formEl) return
   await formEl.validate((valid, fields) => {
-  // TODO 帳號訊息帶出測試
     if (valid) {
-      router.push("/index");
-    // TODO 待測試
-
-      // http.post("/login", res => {
-      //   const jwt = useTokenStore();
-      //   jwt.setJwtToken(res.headers["authorization"]);
-      //   router.push("/index");
-      // })
+      http.post("/user/login", loginForm).then(res => {
+        token.setToken(res.data.token);
+        userAccount.setUser(res.data);
+        userProfile.setUserProfile(res.data)
+        router.push("/index");
+      })
 
     } else {
       console.log('error submit!', fields)

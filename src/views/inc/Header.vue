@@ -1,49 +1,33 @@
 <script setup>
-import { ArrowDown} from "@element-plus/icons-vue";
-import { reactive, ref, onBeforeMount} from 'vue'
-import {useTokenStore} from "@/stores/token.js";
-import { useRouter } from 'vue-router'
-import http from "@/axios/index.js"
+import { ArrowDown } from "@element-plus/icons-vue";
+import { reactive, ref, onBeforeMount } from "vue";
+import { userAccountStore } from "@/stores/user.js";
+import { tokenStore } from "@/stores/token.js";
+import { useRouter } from "vue-router";
+import http from "@/axios/index.js";
 
 const router = useRouter();
+const userAccount = userAccountStore();
+debugger
 
-let userInfo = reactive({
-  id:-1,
-  username:"",
-  avatar:"#"
-})
-
-// TODO 帳號訊息帶出測試
-function getUserInfo(){
-  http.get("/sys/userInfo").then(res => {
-    userInfo = res.data.data;
-  })
+function logout() {
+  http.post("/user/logout").then((res) => {
+    localStorage.clear();
+    sessionStorage.clear();
+    tokenStore.resetToken();
+    router.push("/login");
+  });
 }
-
-function logout(){
-  router.push("/login");
-  // TODO 待測試
-  // http.post("/logout").then(res => {
-  //   localStorage.clear();
-  //   sessionStorage.clear();
-  //   useTokenStore.resetJwtToken();
-  // })
-}
-
-onBeforeMount(() => {
-  // getUserInfo();
-})
-
 </script>
 
 <template>
   <strong>VueAdmin 後臺管理系統</strong>
   <span class="header-avatar">
-    <el-avatar :src="userInfo.avatar" />
+    <el-avatar :src="userAccount.avatar" />
     <el-dropdown>
       <!-- 帳號名稱 -->
       <span class="el-dropdown-link">
-        {{ userInfo.username }}
+        {{ userAccount.username }}
         <el-icon class="el-icon--right">
           <arrow-down />
         </el-icon>
@@ -54,9 +38,11 @@ onBeforeMount(() => {
             <el-dropdown-item>個人資訊</el-dropdown-item>
           </RouterLink>
           <!-- <RouterLink to="/userProfile"> -->
-            <el-dropdown-item>休假資訊</el-dropdown-item>
+          <el-dropdown-item>休假資訊</el-dropdown-item>
           <!-- </RouterLink> -->
-          <el-dropdown-item @click.prevent.stop="logout()">登出</el-dropdown-item>
+          <el-dropdown-item @click.prevent.stop="logout()"
+            >登出</el-dropdown-item
+          >
         </el-dropdown-menu>
       </template>
     </el-dropdown>

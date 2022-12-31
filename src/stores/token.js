@@ -1,19 +1,18 @@
-import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 
-export const useTokenStore = defineStore('token', {
+export const tokenStore = defineStore('token', {
   state: () => ({
-    jwtToken: "",
+    token: "",
   }),
   getters: {
-    getJwtToken: (state) => state.jwtToken,
+    getToken: (state) => state.token,
   },
-  action: {
-    setJwtToken(value){
-      this.jwtToken = value;
+  actions: {
+    setToken(value){
+      this.token = value;
     },
-    resetJwtToken(){
-      this.jwtToken = "";
+    resetToken(){
+      this.token = "";
     }
   }
 })

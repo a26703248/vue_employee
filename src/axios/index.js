@@ -19,12 +19,13 @@ http.interceptors.request.use( config => {
 })
 
 http.interceptors.response.use( resp => {
-  if(resp.status === 200){
-    return resp;
+  let res = resp.data;
+  if(res.code === 200){
+    return res;
   }else{
-    // ElementPlus.ElMessage.error(resp.msg?'發生錯誤請聯絡管理員':msg);
-    console.error(resp)
-    return Promise.reject(resp.data.msg);
+    ElementPlus.ElMessage.error(resp.msg?'發生錯誤請聯絡管理員':msg);
+    console.error(res)
+    return Promise.reject(res.data.msg);
   }
 }, error => {
   if(error){
