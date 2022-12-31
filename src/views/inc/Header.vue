@@ -8,7 +8,6 @@ import http from "@/axios/index.js";
 
 const router = useRouter();
 const userAccount = userAccountStore();
-debugger
 
 function logout() {
   http.post("/user/logout").then((res) => {

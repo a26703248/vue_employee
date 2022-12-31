@@ -1,18 +1,17 @@
-import { defineStore } from 'pinia'
+import { defineStore } from "pinia";
+import { reactive, ref, onBeforeMount } from "vue";
 
-export const tokenStore = defineStore('token', {
-  state: () => ({
-    token: "",
-  }),
-  getters: {
-    getToken: (state) => state.token,
-  },
-  actions: {
-    setToken(value){
-      this.token = value;
-    },
-    resetToken(){
-      this.token = "";
-    }
+export const tokenStore = defineStore("token", () => {
+  const token = ref("");
+  function setToken(value) {
+    token.value = value;
   }
-})
+  function resetToken() {
+    token = "";
+  }
+  return {
+    token,
+    setToken,
+    resetToken,
+  }
+});
