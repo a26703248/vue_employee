@@ -14,7 +14,7 @@ import { menuStore } from "@/stores/menu.js";
 import { storeToRefs } from "pinia";
 
 const menuItem = menuStore();
-const { menu } = storeToRefs(menuItem);
+const { menu, tabsValue } = storeToRefs(menuItem);
 const { addTab } = menuItem;
 
 const menuList = menu;
@@ -37,12 +37,12 @@ const selectMenu = (item) => {
   <el-menu
     active-text-color="#ffd04b"
     background-color="#545c64"
-    default-active="0"
+    :default-active="tabsValue"
     class="el-menu-vertical"
     text-color="#fff"
   >
     <RouterLink to="/index">
-      <el-menu-item index="0">
+      <el-menu-item index="Index" @click="selectMenu({name:'Index', title:'首頁'})">
         <el-icon><House /></el-icon>
         <template #title>首頁</template>
       </el-menu-item>

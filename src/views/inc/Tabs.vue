@@ -2,6 +2,8 @@
 import { ref, computed } from 'vue'
 import {menuStore} from "@/stores/menu.js";
 import {storeToRefs} from "pinia";
+import { useRouter } from "vue-router";
+const router = useRouter();
 
 let tabIndex = 2
 const menuItem = menuStore();
@@ -42,6 +44,10 @@ const removeTab = (targetName) => {
   editableTabsValue.value = activeName
   editableTabs.value = tabsList.filter((tab) => tab.name !== targetName)
 }
+
+const clickTab = (target) => {
+  router.push({name:target.props.name});
+}
 </script>
 
 <template>
@@ -50,6 +56,7 @@ const removeTab = (targetName) => {
     type="card"
     closable
     @tab-remove="removeTab"
+    @tab-click="clickTab"
   >
     <el-tab-pane
       v-for="item in editableTabs"

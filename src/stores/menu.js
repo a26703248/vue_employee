@@ -35,10 +35,13 @@ export const menuStore = defineStore("men", () => {
   }
 
   function addTab(tab) {
-    tabs.value.push({
-      title: tab.title,
-      name: tab.name,
-    });
+    let index = tabs.value.findIndex(e => e.name === tab.name)
+    if(index === -1){
+      tabs.value.push({
+        title: tab.title,
+        name: tab.name,
+      });
+    }
     tabsValue.value = tab.name;
   }
 
