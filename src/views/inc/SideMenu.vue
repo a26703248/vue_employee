@@ -10,13 +10,13 @@ import {
 } from "@element-plus/icons-vue";
 import { reactive, ref, computed } from "vue";
 import { useRouter } from "vue-router";
-import {menuStore} from "@/stores/menu.js";
-import {storeToRefs} from "pinia";
+import { menuStore } from "@/stores/menu.js";
+import { storeToRefs } from "pinia";
 
 const menuItem = menuStore();
-const {menu, addTab} = storeToRefs(menuItem);
+const { menu } = storeToRefs(menuItem);
+const { addTab } = menuItem;
 
-// TODO 動態顯示欄位
 const menuList = menu;
 
 let iconMap = {
@@ -30,7 +30,7 @@ let iconMap = {
 };
 const selectMenu = (item) => {
   addTab(item);
-}
+};
 </script>
 
 <template>

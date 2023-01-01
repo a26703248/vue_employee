@@ -46,7 +46,6 @@ const router = createRouter({
     },
   ],
 });
-// TODO 測試
 router.beforeEach((to, form, next) => {
   const menuItem = menuStore();
   const {

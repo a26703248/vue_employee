@@ -5,8 +5,8 @@ export const menuStore = defineStore("men", () => {
   const menu = reactive([]);
   const authorities = reactive([]);
   const hasRouter = ref(sessionStorage.getItem("hasRoute"));
-  const editableTabsValue = ref("Index");
-  const editableTabs = ref([
+  const tabsValue = ref("Index");
+  const tabs = ref([
     {
       title: "首頁",
       name: "Index",
@@ -35,12 +35,11 @@ export const menuStore = defineStore("men", () => {
   }
 
   function addTab(tab) {
-    editableTabs.value.push({
+    tabs.value.push({
       title: tab.title,
       name: tab.name,
-      content: "New Tab content",
     });
-    editableTabsValue.value = tab.name;
+    tabsValue.value = tab.name;
   }
 
   return {
@@ -55,8 +54,8 @@ export const menuStore = defineStore("men", () => {
     hasRouter,
     changeRouterStatus,
     // tab
-    editableTabsValue,
-    editableTabs,
+    tabsValue,
+    tabs,
     addTab,
   };
 });

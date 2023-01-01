@@ -1,19 +1,37 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import {menuStore} from "@/stores/menu.js";
 import {storeToRefs} from "pinia";
 
 let tabIndex = 2
 const menuItem = menuStore();
-const {editableTabsValue, editableTabs} = storeToRefs(menuItem);
+const {tabsValue, tabs} = storeToRefs(menuItem);
+
+const editableTabsValue = computed({
+  get(){
+    return tabsValue.value;
+  },
+  set(value){
+    tabsValue.value = value;
+  }
+})
+
+const editableTabs = computed({
+  get(){
+    return tabs.value;
+  },
+  set(value){
+    tabs.value = value;
+  }
+})
 
 const removeTab = (targetName) => {
-  const tabs = editableTabs.value
-  let activeName = editableTabsValue.value
+  const tabsList = editableTabs
+  let activeName = editableTabsValue
   if (activeName === targetName) {
-    tabs.forEach((tab, index) => {
+    tabsList.forEach((tab, index) => {
       if (tab.name === targetName) {
-        const nextTab = tabs[index + 1] || tabs[index - 1]
+        const nextTab = tabsList[index + 1] || tabsList[index - 1]
         if (nextTab) {
           activeName = nextTab.name
         }
@@ -21,8 +39,8 @@ const removeTab = (targetName) => {
     })
   }
 
-  editableTabsValue.value = activeName
-  editableTabs.value = tabs.filter((tab) => tab.name !== targetName)
+  editableTabsValue = activeName
+  editableTabs = tabsList.filter((tab) => tab.name !== targetName)
 }
 </script>
 
