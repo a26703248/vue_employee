@@ -26,8 +26,8 @@ const editableTabs = computed({
 })
 
 const removeTab = (targetName) => {
-  const tabsList = editableTabs
-  let activeName = editableTabsValue
+  const tabsList = editableTabs.value
+  let activeName = editableTabsValue.value
   if (activeName === targetName) {
     tabsList.forEach((tab, index) => {
       if (tab.name === targetName) {
@@ -39,8 +39,8 @@ const removeTab = (targetName) => {
     })
   }
 
-  editableTabsValue = activeName
-  editableTabs = tabsList.filter((tab) => tab.name !== targetName)
+  editableTabsValue.value = activeName
+  editableTabs.value = tabsList.filter((tab) => tab.name !== targetName)
 }
 </script>
 
