@@ -1,5 +1,7 @@
 import axios from "axios";
 import { ElMessage } from "element-plus";
+import { useRouter } from "vue-router";
+const router = useRouter();
 
 // 共用參數配置
 let config = {

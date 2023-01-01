@@ -8,45 +8,29 @@ import {
   Lock,
   UserFilled,
 } from "@element-plus/icons-vue";
-import { reactive, ref, shallowRef } from "vue";
+import { reactive, ref, computed } from "vue";
 import { useRouter } from "vue-router";
+import {menuStore} from "@/stores/menu.js";
+import {storeToRefs} from "pinia";
+
+const menuItem = menuStore();
+const {menu, addTab} = storeToRefs(menuItem);
 
 // TODO 動態顯示欄位
-const menuList = reactive([
-  {
-    title: "帳戶管理",
-    name: "AccountMana",
-    icon: shallowRef(Setting),
-    path: "",
-    children: [
-      {
-        title: "帳戶設定",
-        name: "AccountSetting",
-        icon: shallowRef(UserFilled),
-        path: "/sys/user",
-      },
-      {
-        title: "權限設定",
-        name: "RoleSetting",
-        icon: shallowRef(Lock),
-        path: "/sys/roles",
-      },
-      {
-        title: "選單設定",
-        name: "MenuSetting",
-        icon: shallowRef(Document),
-        path: "/sys/menu",
-      },
-    ],
-  },
-  {
-    title: "系統工具",
-    name: "SystemTool",
-    icon: shallowRef(Operation),
-    path: "",
-    children: [],
-  },
-]);
+const menuList = menu;
+
+let iconMap = {
+  document: Document,
+  menu: IconMenu,
+  house: House,
+  setting: Setting,
+  operation: Operation,
+  lock: Lock,
+  userFilled: UserFilled,
+};
+const selectMenu = (item) => {
+  addTab(item);
+}
 </script>
 
 <template>
@@ -67,16 +51,20 @@ const menuList = reactive([
     <el-sub-menu :index="menu.name" v-for="menu in menuList" :key="menu.name">
       <template #title>
         <el-icon>
-          <component :is="menu.icon"/>
+          <component :is="iconMap[menu.icon]" />
         </el-icon>
-        <span>{{menu.title}}</span>
+        <span>{{ menu.title }}</span>
       </template>
-      <RouterLink :to="children.path" v-for="children in menu.children" :key="children.name">
-        <el-menu-item :index="children.name">
+      <RouterLink
+        :to="children.path"
+        v-for="children in menu.children"
+        :key="children.name"
+      >
+        <el-menu-item :index="children.name" @click="selectMenu(children)">
           <el-icon>
-            <component :is="children.icon"/>
+            <component :is="iconMap[children.icon]" />
           </el-icon>
-          <template #title>{{children.title}}</template>
+          <template #title>{{ children.title }}</template>
         </el-menu-item>
       </RouterLink>
     </el-sub-menu>
