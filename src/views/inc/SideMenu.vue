@@ -9,13 +9,8 @@ import {
   UserFilled,
 } from "@element-plus/icons-vue";
 import { reactive, ref, computed } from "vue";
-import { useRouter } from "vue-router";
-import { menuStore } from "@/stores/menu.js";
-import { storeToRefs } from "pinia";
-
-const menuItem = menuStore();
-const { tabsValue } = storeToRefs(menuItem);
-const { addTab } = menuItem;
+import { useRouter, useRoute } from "vue-router";
+const route = useRoute();
 
 const menuList = [
   {
@@ -68,24 +63,22 @@ let iconMap = {
   userFilled: UserFilled,
 };
 
-const selectMenu = (item) => {
-  addTab(item);
-};
+let activeName = computed(() => {
+  let menuNameList = ["AccountMana", "SysUser", "SysRole", "SysMenu"]
+  return menuNameList.includes(route.name)?route.name:"Index";
+})
 </script>
 
 <template>
   <el-menu
     active-text-color="#ffd04b"
     background-color="#545c64"
-    :default-active="tabsValue"
+    :default-active="activeName"
     class="el-menu-vertical"
     text-color="#fff"
   >
     <RouterLink to="/index">
-      <el-menu-item
-        index="Index"
-        @click="selectMenu({ name: 'Index', title: '首頁' })"
-      >
+      <el-menu-item index="Index">
         <el-icon><House /></el-icon>
         <template #title>首頁</template>
       </el-menu-item>
@@ -103,7 +96,7 @@ const selectMenu = (item) => {
         v-for="children in menu.children"
         :key="children.name"
       >
-        <el-menu-item :index="children.name" @click="selectMenu(children)">
+        <el-menu-item :index="children.name">
           <el-icon>
             <component :is="iconMap[children.icon]" />
           </el-icon>

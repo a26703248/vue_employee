@@ -6,7 +6,6 @@ import {
 import Home from "@/views/Home.vue";
 import Index from "@/views/Index.vue";
 import http from "@/axios/index.js";
-import { menuStore } from "@/stores/menu.js";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -52,13 +51,6 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, form, next) => {
-  if (to.path != "/login") {
-    let obj = {
-      name: to.name,
-      title: to.title,
-    };
-    // addTab(obj);
-  }
   next();
 });
 

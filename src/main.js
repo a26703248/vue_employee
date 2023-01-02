@@ -13,8 +13,8 @@ const app = createApp(App);
 // debugger
 
 app
-.use(createPinia())
 .use(router)
+.use(createPinia())
 .use(ElementPlus);
 
 app.mount("#app");

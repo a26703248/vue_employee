@@ -1,7 +1,6 @@
 <script setup>
 import SideMenu from "@/views/inc/SideMenu.vue";
 import Header from "@/views/inc/Header.vue";
-import Tabs from "@/views/inc/Tabs.vue";
 </script>
 
 <template>
@@ -17,7 +16,6 @@ import Tabs from "@/views/inc/Tabs.vue";
       </el-header>
       <!-- main -->
       <el-main>
-        <Tabs></Tabs>
         <RouterView />
       </el-main>
     </el-container>
@@ -45,9 +43,9 @@ import Tabs from "@/views/inc/Tabs.vue";
 .el-main {
   background-color: var(--grey);
   color: var(--black);
-  text-align: center;
+  text-align: left;
   line-height: 100%;
-  padding: 0;
+  padding: 40px;
 }
 /* container end */
 </style>
