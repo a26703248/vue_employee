@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <div>菜單管理</div>
+  <div>選單管理</div>
 </template>
 
 <style scoped>

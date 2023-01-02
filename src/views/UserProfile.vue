@@ -114,7 +114,6 @@ const loginProfileRules = reactive({
   repeatNewPassword: [{ validator: validateRepeatPassword, trigger: "blur" }],
 });
 function validateRepeatPassword(rule, val, callback) {
-  console.log(val);
   if (val === "") {
     return callback(new Error("確認新密碼是否錯誤"));
   }
@@ -160,13 +159,11 @@ const submitForm = async (formEl, formName) => {
       switch (formName) {
         case "account":
           http.post("/user/update/account", (res) => {
-            console.log(res.data.page);
             router.push("/login");
           });
           break;
         case "profile":
           http.post("/user/update/profile", (res) => {
-            console.log(res.data.page);
             router.push("/login");
           });
           break;

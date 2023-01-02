@@ -28,6 +28,7 @@ const editableTabs = computed({
 })
 
 const removeTab = (targetName) => {
+  if(targetName === "Index") return;
   const tabsList = editableTabs.value
   let activeName = editableTabsValue.value
   if (activeName === targetName) {
@@ -43,6 +44,7 @@ const removeTab = (targetName) => {
 
   editableTabsValue.value = activeName
   editableTabs.value = tabsList.filter((tab) => tab.name !== targetName)
+  router.push({name:activeName});
 }
 
 const clickTab = (target) => {

@@ -74,50 +74,6 @@ export default [
     method: "get",
     response: () => {
       RESULT.data = {
-        nav: [
-          {
-            title: "帳戶管理",
-            name: "AccountMana",
-            icon: "setting",
-            component:"",
-            path: "",
-            pathParent:"",
-            children: [
-              {
-                pathParent:"home",
-                title: "帳戶設定",
-                name: "AccountSetting",
-                component:"sys/User",
-                icon: "userFilled",
-                path: "/sys/user",
-              },
-              {
-                pathParent:"home",
-                title: "權限設定",
-                name: "RoleSetting",
-                component:"sys/Roles",
-                icon: "lock",
-                path: "/sys/roles",
-              },
-              {
-                pathParent:"home",
-                title: "選單設定",
-                name: "MenuSetting",
-                component:"sys/Menu",
-                icon: "document",
-                path: "/sys/menu",
-              },
-            ],
-          },
-          {
-            title: "系統工具",
-            name: "SystemTool",
-            icon: "operation",
-            component:"",
-            path: "",
-            children: [],
-          },
-        ],
         authorities:[],
       };
       return RESULT;

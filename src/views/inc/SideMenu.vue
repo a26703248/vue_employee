@@ -14,10 +14,49 @@ import { menuStore } from "@/stores/menu.js";
 import { storeToRefs } from "pinia";
 
 const menuItem = menuStore();
-const { menu, tabsValue } = storeToRefs(menuItem);
+const { tabsValue } = storeToRefs(menuItem);
 const { addTab } = menuItem;
 
-const menuList = menu;
+const menuList = [
+  {
+    title: "帳戶管理",
+    name: "AccountMana",
+    icon: "setting",
+    component: "",
+    path: "",
+    children: [
+      {
+        title: "帳戶設定",
+        name: "SysUser",
+        component: "sys/User",
+        icon: "userFilled",
+        path: "/sys/user",
+      },
+      {
+        title: "權限設定",
+        name: "SysRole",
+        component: "sys/Roles",
+        icon: "lock",
+        path: "/sys/roles",
+      },
+      {
+        title: "選單設定",
+        name: "SysMenu",
+        component: "sys/Menu",
+        icon: "document",
+        path: "/sys/menu",
+      },
+    ],
+  },
+  {
+    title: "系統工具",
+    name: "SystemTool",
+    icon: "operation",
+    component: "",
+    path: "",
+    children: [],
+  },
+];
 
 let iconMap = {
   document: Document,
@@ -28,6 +67,7 @@ let iconMap = {
   lock: Lock,
   userFilled: UserFilled,
 };
+
 const selectMenu = (item) => {
   addTab(item);
 };
@@ -42,7 +82,10 @@ const selectMenu = (item) => {
     text-color="#fff"
   >
     <RouterLink to="/index">
-      <el-menu-item index="Index" @click="selectMenu({name:'Index', title:'首頁'})">
+      <el-menu-item
+        index="Index"
+        @click="selectMenu({ name: 'Index', title: '首頁' })"
+      >
         <el-icon><House /></el-icon>
         <template #title>首頁</template>
       </el-menu-item>

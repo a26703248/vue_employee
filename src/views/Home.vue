@@ -47,7 +47,7 @@ import Tabs from "@/views/inc/Tabs.vue";
   color: var(--black);
   text-align: center;
   line-height: 100%;
-  padding:0;
+  padding: 0;
 }
 /* container end */
 </style>
