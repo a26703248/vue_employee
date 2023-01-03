@@ -45,7 +45,8 @@ import Header from "@/views/inc/Header.vue";
   color: var(--black);
   text-align: left;
   line-height: 100%;
-  padding: 40px;
+  padding: 20px;
+  padding-top: 40px;
 }
 /* container end */
 </style>

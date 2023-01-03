@@ -1,7 +1,5 @@
 import axios from "axios";
 import { ElMessage } from "element-plus";
-import { useRouter } from "vue-router";
-const router = useRouter();
 
 // 共用參數配置
 let config = {
@@ -27,7 +25,11 @@ http.interceptors.response.use(
     if (res.code === 200) {
       return res;
     } else {
-      ElMessage.error(res.msg ? res.msg : "發生錯誤請聯絡管理員");
+      ElMessage({
+        showClose: true,
+        message: res.msg ? res.msg : "發生錯誤請聯絡管理員",
+        type: "error",
+      });
       console.error(res);
       return Promise.reject(res.msg);
     }
@@ -36,16 +38,22 @@ http.interceptors.response.use(
     if (error) {
       error.message = error.response.data.msg;
     }
+    // TODO 解決 axios 與 vue router 問題
     switch (error.response.status) {
       case 401:
-        router.push("/login");
+        // router.push("/login");
         break;
       case 404:
-        router.push("/");
+        // router.push("/");
         break;
     }
 
-    ElMessage.error({message: "發生錯誤請聯絡管理員",duration:3000});
+    ElMessage({
+      showClose: true,
+      message: "發生錯誤請聯絡管理員",
+      type: "error",
+      duration: 3000,
+    });
     console.error(error.message);
     return Promise.reject(error.message);
   }

@@ -1,6 +1,6 @@
 let RESULT = {
   code: 200,
-  msg: "error",
+  msg: "success",
   data: {},
 };
 export default [
@@ -74,8 +74,124 @@ export default [
     method: "get",
     response: () => {
       RESULT.data = {
-        authorities:[],
+        authorities: [],
       };
+      return RESULT;
+    },
+  },
+  {
+    url: "/sys/menu/list",
+    method: "get",
+    response: () => {
+      RESULT.data = [
+        {
+          id: 1,
+          created: "2022-01-01",
+          updated: "2022-01-01",
+          status: 1,
+          parentId: 0,
+          name: "帳戶管理",
+          path: "",
+          perms: "sys:manage",
+          component: "",
+          type: 0,
+          icon: "setting",
+          orderNum: 1,
+          children: [
+            {
+              id: 12,
+              created: "2022-01-01",
+              updated: "2022-01-01",
+              status: 1,
+              parentId: 1,
+              name: "帳號設定",
+              path: "",
+              perms: "sys:user",
+              component: "",
+              type: 1,
+              icon: "user",
+              orderNum: 1,
+              children: [
+                {
+                  id: 121,
+                  created: "2022-01-01",
+                  updated: "2022-01-01",
+                  status: 1,
+                  parentId: 2,
+                  name: "新增帳號",
+                  path: "",
+                  perms: "sys:user",
+                  component: "",
+                  type: 2,
+                  icon: "user",
+                  orderNum: 1,
+                },
+              ],
+            },
+          ],
+        },
+      ];
+      return RESULT;
+    },
+  },
+  // menu manager restAPI test
+  // select
+  {
+    url: "/sys/menu/info/:id",
+    method: "get",
+    response: () => {
+      RESULT.data = {
+        id: 1,
+        created: "2022-01-01",
+        updated: "2022-01-01",
+        status: 1,
+        parentId: 1,
+        name: "帳戶管理",
+        path: "",
+        perms: "sys:manage",
+        component: "",
+        type: 0,
+        icon: "setting",
+        orderNum: 1,
+      };
+      return RESULT;
+    },
+  },
+  // update
+  {
+    url: "/sys/menu/update/:id",
+    method: "post",
+    response: () => {
+      return RESULT;
+    },
+  },
+  // create
+  {
+    url: "/sys/menu/save",
+    method: "post",
+    response: () => {
+      return RESULT;
+    },
+  },
+  // delete
+  {
+    url: "/sys/menu/delete/:id",
+    method: "post",
+    response: () => {
+      return RESULT;
+    },
+  },
+  {
+    url: "/sys/role/:id(.*)",
+    method: "post",
+    response: () => {
+      return RESULT;
+    },
+  },
+  {
+    url: "/sys/role/:id(.*)",
+    method: "get",
+    response: () => {
       return RESULT;
     },
   },
