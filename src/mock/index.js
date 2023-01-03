@@ -181,17 +181,46 @@ export default [
       return RESULT;
     },
   },
+  // role manager
   {
-    url: "/sys/role/:id(.*)",
+    url: RegExp("/sys/role/*"),
     method: "post",
     response: () => {
       return RESULT;
     },
   },
   {
-    url: "/sys/role/:id(.*)",
+    url: RegExp("/sys/role/info/*"),
     method: "get",
     response: () => {
+      return RESULT;
+    },
+  },
+  {
+    url: RegExp("/sys/role/list/*"),
+    method: "get",
+    response: () => {
+      RESULT.data = {
+        records: [
+          {
+            id: 1,
+            name: "外部使用者",
+            code: "anonymous",
+            description: "text1",
+            status: 1,
+          },
+          {
+            id: 2,
+            name: "管理者",
+            code: "admin",
+            description: "text2",
+            status: 1,
+          },
+        ],
+        pageSize:10,
+        total:400,
+        currentPage:1,
+      };
       return RESULT;
     },
   },

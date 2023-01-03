@@ -5,21 +5,8 @@ import http from "@/axios/index.js";
 
 // table
 let searchForm = reactive({});
-const batchDeleteDis = ref(false);
-const tableData = [
-  {
-    name: "外部使用者",
-    code: "anonymous",
-    description: "text1",
-    status: 1,
-  },
-  {
-    name: "管理者",
-    code: "admin",
-    description: "text2",
-    status: 1,
-  },
-];
+const batchDeleteDis = ref(true);
+const tableData = ref([]);
 const multipleTableRef = ref();
 const multipleSelection = ref([]);
 const toggleSelection = (rows) => {
@@ -33,28 +20,51 @@ const toggleSelection = (rows) => {
 };
 const handleSelectionChange = (val) => {
   multipleSelection.value = val;
+  batchDeleteDis.value = multipleSelection.value.length == 0;
 };
-const getRoleTable = () => {
-  http.get("/sys/role/list").then((res) => {
-    tableData.value = res.data;
-  });
+
+const getRoleList = () => {
+  http
+    .get("/sys/role/list", {
+      params: {
+        name: searchForm.name,
+        currentPage: currentPage.value,
+        size: pageSize.value,
+      },
+    })
+    .then((res) => {
+      tableData.value  = res.data.records;
+      size.value = res.data.pageSize;
+      currentPage.value = res.data.currentPage;
+      total.value = res.data.total;
+    });
 };
+
 const deleteHandle = (id) => {
-  console.log(id)
-  http.post("/sys/role/delete/" + id).then((res) => {
+  let ids = [];
+  if(id){
+    ids.push(id);
+  }else{
+    multipleSelection.value.forEach(e => {
+      ids.push(e.id);
+    })
+  }
+  let data =  new FormData()
+  data.append("ids", ids)
+  http.post("/sys/role/delete", data).then((res) => {
     ElMessage({
       showClose: true,
       message: "操作成功",
       type: "success",
       onClose: () => {
-        getRoleTable();
+        getRoleList();
       },
     });
   });
 };
 
 onBeforeMount(() => {
-  getRoleTable();
+  getRoleList();
 });
 
 // dialog
@@ -94,8 +104,7 @@ const editRule = reactive({
 
 const editHandle = (id) => {
   http.get("/sys/role/info/" + id).then((res) => {
-    // TODO 串接後端時開啟
-    // editForm = reactive(res.data);
+    editForm = reactive(res.data);
     visibleDialog.value = true;
   });
 };
@@ -113,7 +122,7 @@ const submitForm = async (formEl) => {
             message: "操作成功",
             type: "success",
             onClose: () => {
-              getRoleTable();
+              getRoleList();
             },
           });
         });
@@ -147,12 +156,15 @@ const pageSizes = ref([10, 20, 50, 100]);
 const total = ref(0);
 const handleSizeChange = (val) => {
   console.log(`${val} items per page`);
+  pageSize.value = val;
+  getRoleList();
 };
 
 const handleCurrentChange = (val) => {
   console.log(`current page: ${val}`);
+  currentPage.value = val;
+  getRoleList();
 };
-
 </script>
 
 <template>
@@ -167,7 +179,7 @@ const handleCurrentChange = (val) => {
         ></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="info">搜索</el-button>
+        <el-button type="info" @click="getRoleList()">搜索</el-button>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="visibleDialog = true">新增</el-button>
@@ -175,7 +187,9 @@ const handleCurrentChange = (val) => {
       <el-form-item>
         <el-popconfirm title="確定是否批量刪除" @confirm="deleteHandle()">
           <template #reference>
-            <el-button type="danger" :disabled="batchDeleteDis">批量刪除</el-button>
+            <el-button type="danger" :disabled="batchDeleteDis"
+              >批量刪除</el-button
+            >
           </template>
         </el-popconfirm>
       </el-form-item>

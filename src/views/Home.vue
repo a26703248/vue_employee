@@ -1,6 +1,7 @@
 <script setup>
 import SideMenu from "@/views/inc/SideMenu.vue";
 import Header from "@/views/inc/Header.vue";
+// TODO 動態路由 tab
 </script>
 
 <template>
