@@ -322,6 +322,7 @@ onBeforeMount(() => {
             link
             >分配權限</el-button
           >
+          <el-divider direction="vertical" />
           <el-button
             type="primary"
             @click="dialogOpenHandle('update', scoped.row.id)"
