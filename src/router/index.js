@@ -25,11 +25,12 @@ const router = createRouter({
           name: "userProfile",
           component: () => import("@/views/UserProfile.vue"),
         },
-        {
-        path: '/sys/menu',
-        name: 'SysMenu',
-        component: () => import("@/views/sys/Menu.vue")
-        },
+        // TODO 暫時不用
+        // {
+        // path: '/sys/menu',
+        // name: 'SysMenu',
+        // component: () => import("@/views/sys/Menu.vue")
+        // },
         {
           path: '/sys/user',
           name: 'SysUser',

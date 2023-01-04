@@ -33,7 +33,7 @@ const getRoleList = () => {
       },
     })
     .then((res) => {
-      tableData.value  = res.data.records;
+      tableData.value = res.data.records;
       size.value = res.data.pageSize;
       currentPage.value = res.data.currentPage;
       total.value = res.data.total;
@@ -42,15 +42,15 @@ const getRoleList = () => {
 
 const deleteHandle = (id) => {
   let ids = [];
-  if(id){
+  if (id) {
     ids.push(id);
-  }else{
-    multipleSelection.value.forEach(e => {
+  } else {
+    multipleSelection.value.forEach((e) => {
       ids.push(e.id);
-    })
+    });
   }
-  let data =  new FormData()
-  data.append("ids", ids)
+  let data = new FormData();
+  data.append("ids", ids);
   http.post("/sys/role/delete", data).then((res) => {
     ElMessage({
       showClose: true,
@@ -63,12 +63,9 @@ const deleteHandle = (id) => {
   });
 };
 
-onBeforeMount(() => {
-  getRoleList();
-});
-
 // dialog
 const visibleDialog = ref(false);
+const permVisibleDialog = ref(false);
 const dialogOpenHandle = (key, data) => {
   if (key === "save") {
     resetEditForm();
@@ -76,8 +73,11 @@ const dialogOpenHandle = (key, data) => {
   } else if (key === "update") {
     resetEditForm();
     editHandle(data);
+  } else if (key === "permHandle") {
+    permHandle(data);
   }
 };
+
 
 // form
 const size = ref("default");
@@ -110,7 +110,6 @@ const editHandle = (id) => {
 };
 
 const submitForm = async (formEl) => {
-  console.log(editForm);
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
     if (valid) {
@@ -148,6 +147,18 @@ const resetEditForm = () => {
   });
 };
 
+let permFormRefs = ref(null);
+let premForm = reactive({});
+
+const permHandle = (id) => {
+    permVisibleDialog.value = true;
+    http.get("/sys/role/info" + id).then(res => {
+      // TODO 測試
+      permDialogTree.value.getCheckedKeys(res.data.menuIds)
+      premForm = res.data.data;
+    })
+}
+
 // TODO 分頁功能
 // pagination
 const currentPage = ref(4);
@@ -165,6 +176,76 @@ const handleCurrentChange = (val) => {
   currentPage.value = val;
   getRoleList();
 };
+
+// tree
+const permDialogTree = ref(null);
+const defaultProps = {
+  children: "children",
+  label: "name",
+};
+
+const permData = ref([
+  {
+    id: 1,
+    label: "Level one 1",
+    children: [
+      {
+        id: 4,
+        label: "Level two 1-1",
+        children: [
+          {
+            id: 9,
+            label: "Level three 1-1-1",
+          },
+          {
+            id: 10,
+            label: "Level three 1-1-2",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 2,
+    label: "Level one 2",
+    children: [
+      {
+        id: 5,
+        label: "Level two 2-1",
+      },
+      {
+        id: 6,
+        label: "Level two 2-2",
+      },
+    ],
+  },
+  {
+    id: 3,
+    label: "Level one 3",
+    children: [
+      {
+        id: 7,
+        label: "Level two 3-1",
+      },
+      {
+        id: 8,
+        label: "Level two 3-2",
+      },
+    ],
+  },
+]);
+
+const handleCheckChange = (data, checked, indeterminate) => {
+  console.log(data, checked, indeterminate);
+};
+
+// life cycle
+onBeforeMount(() => {
+  getRoleList();
+  http.get("/sys/menu/list").then((res) => {
+    permData.value = res.data;
+  });
+});
 </script>
 
 <template>
@@ -224,7 +305,7 @@ const handleCurrentChange = (val) => {
         <template #="scoped">
           <el-button
             type="primary"
-            @click="dialogOpenHandle('update', scoped.row.id)"
+            @click="dialogOpenHandle('permHandle', scoped.row.id)"
             link
             >分配權限</el-button
           >
@@ -258,7 +339,12 @@ const handleCurrentChange = (val) => {
       @current-change="handleCurrentChange"
     />
     <!-- form -->
-    <el-dialog ref="formDialog" v-model="visibleDialog" width="30%">
+    <el-dialog
+      title="新增"
+      ref="formDialog"
+      v-model="visibleDialog"
+      width="30%"
+    >
       <el-form
         ref="editFormRefs"
         :model="editForm"
@@ -291,6 +377,33 @@ const handleCurrentChange = (val) => {
           >
         </el-form-item>
       </el-form>
+    </el-dialog>
+    <el-dialog
+      title="分配權限"
+      ref="permDialog"
+      v-model="permVisibleDialog"
+      width="30%"
+    >
+      <el-form ref="permFormRefs" v-model="premForm">
+        <el-tree
+          ref="permDialogTree"
+          :props="defaultProps"
+          :data="permData"
+          :default-expand-all="true"
+          show-checkbox
+          :check-strictly="true"
+          @check-change="handleCheckChange()"
+        />
+      </el-form>
+
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="permVisibleDialog = false">取消</el-button>
+          <el-button type="primary" @click="submitPermFormHandle(permDialog)">
+            送出
+          </el-button>
+        </span>
+      </template>
     </el-dialog>
   </div>
 </template>

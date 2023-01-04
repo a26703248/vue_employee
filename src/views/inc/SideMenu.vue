@@ -34,13 +34,13 @@ const menuList = [
         icon: "lock",
         path: "/sys/roles",
       },
-      {
-        title: "選單設定",
-        name: "SysMenu",
-        component: "sys/Menu",
-        icon: "document",
-        path: "/sys/menu",
-      },
+      // {
+      //   title: "選單設定",
+      //   name: "SysMenu",
+      //   component: "sys/Menu",
+      //   icon: "document",
+      //   path: "/sys/menu",
+      // },
     ],
   },
   {
