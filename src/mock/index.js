@@ -203,7 +203,7 @@ export default [
             status: 1,
           },
         ],
-        menuIds:[1, 12, 121]
+        menuIds: [1, 12, 121],
       };
       return RESULT;
     },
@@ -236,9 +236,84 @@ export default [
       return RESULT;
     },
   },
-{
+  {
     url: RegExp("/sys/role/perm/*"),
     method: "get",
+    response: () => {
+      return RESULT;
+    },
+  },
+  // user manager
+  {
+    url: RegExp("/sys/user/*"),
+    method: "post",
+    response: () => {
+      return RESULT;
+    },
+  },
+  {
+    url: RegExp("/sys/user/info/*"),
+    method: "get",
+    response: () => {
+      RESULT.data = {
+        info: [
+          {
+            id: 1,
+            name: "外部使用者",
+            code: "anonymous",
+            description: "text1",
+            status: 1,
+          },
+        ],
+        menuIds: [1, 12, 121],
+      };
+      return RESULT;
+    },
+  },
+  {
+    url: RegExp("/sys/user/list/*"),
+    method: "get",
+    response: () => {
+      RESULT.data = {
+        records: [
+          {
+            id: 1,
+            avatar: "#",
+            username: "admin",
+            roles: [{ name: "anonymous" }, { name: "admin" }],
+            email: "XXX@gmail.com",
+            mobile: "0911111111",
+            status: 1,
+            createdDate: "2022-01-01 00:00:00",
+          },
+          {
+            id: 2,
+            avatar: "#",
+            username: "develop",
+            roles: [{ name: "anonymous" }],
+            email: "XXX@gmail.com",
+            mobile: "0911111111",
+            status: 1,
+            createdDate: "2022-01-01 00:00:00",
+          },
+        ],
+        pageSize: 10,
+        total: 400,
+        currentPage: 1,
+      };
+      return RESULT;
+    },
+  },
+  {
+    url: RegExp("/sys/role/perm/*"),
+    method: "get",
+    response: () => {
+      return RESULT;
+    },
+  },
+  {
+    url: RegExp("/sys/user/rest/password/*"),
+    method: "post",
     response: () => {
       return RESULT;
     },
