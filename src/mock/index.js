@@ -193,6 +193,18 @@ export default [
     url: RegExp("/sys/role/info/*"),
     method: "get",
     response: () => {
+      RESULT.data = {
+        info: [
+          {
+            id: 1,
+            name: "外部使用者",
+            code: "anonymous",
+            description: "text1",
+            status: 1,
+          },
+        ],
+        menuIds:[1, 12, 121]
+      };
       return RESULT;
     },
   },
@@ -200,7 +212,6 @@ export default [
     url: RegExp("/sys/role/list/*"),
     method: "get",
     response: () => {
-
       RESULT.data = {
         records: [
           {
@@ -218,10 +229,17 @@ export default [
             status: 1,
           },
         ],
-        pageSize:10,
-        total:400,
-        currentPage:1,
+        pageSize: 10,
+        total: 400,
+        currentPage: 1,
       };
+      return RESULT;
+    },
+  },
+{
+    url: RegExp("/sys/role/perm/*"),
+    method: "get",
+    response: () => {
       return RESULT;
     },
   },

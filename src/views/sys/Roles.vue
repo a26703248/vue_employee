@@ -148,14 +148,13 @@ const resetEditForm = () => {
 };
 
 let permFormRefs = ref(null);
-let premForm = reactive({});
+let permForm = reactive({});
 
 const permHandle = (id) => {
     permVisibleDialog.value = true;
     http.get("/sys/role/info" + id).then(res => {
-      // TODO 測試
-      permDialogTree.value.getCheckedKeys(res.data.menuIds)
-      premForm = res.data.data;
+      permDialogTree.value.setCheckedKeys(res.data.menuIds)
+      permForm = res.data.info;
     })
 }
 
@@ -235,9 +234,22 @@ const permData = ref([
   },
 ]);
 
-const handleCheckChange = (data, checked, indeterminate) => {
-  console.log(data, checked, indeterminate);
-};
+const submitPermFormHandle = () => {
+  let menuIds = permDialogTree.value.getCheckedKeys();
+  let formData = new FormData();
+  formData.append("menuIds", menuIds)
+  http.post("/sys/role/perm/" + permFormRefs.id, formData).then(res => {
+    ElMessage({
+      showClose:true,
+      type:"success",
+      message:"操作成功",
+      onClose:()=> {
+        getRoleList();
+      }
+    })
+    permVisibleDialog.value = false;
+  });
+}
 
 // life cycle
 onBeforeMount(() => {
@@ -246,6 +258,7 @@ onBeforeMount(() => {
     permData.value = res.data;
   });
 });
+
 </script>
 
 <template>
@@ -384,22 +397,22 @@ onBeforeMount(() => {
       v-model="permVisibleDialog"
       width="30%"
     >
-      <el-form ref="permFormRefs" v-model="premForm">
+      <el-form ref="permFormRefs" v-model="permForm">
         <el-tree
           ref="permDialogTree"
           :props="defaultProps"
           :data="permData"
           :default-expand-all="true"
           show-checkbox
+          node-key="id"
           :check-strictly="true"
-          @check-change="handleCheckChange()"
         />
       </el-form>
 
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="permVisibleDialog = false">取消</el-button>
-          <el-button type="primary" @click="submitPermFormHandle(permDialog)">
+          <el-button type="primary" @click="submitPermFormHandle()">
             送出
           </el-button>
         </span>
