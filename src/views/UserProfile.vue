@@ -115,12 +115,12 @@ const loginProfileRules = reactive({
 });
 function validateRepeatPassword(rule, val, callback) {
   if (val === "") {
-    return callback(new Error("確認新密碼是否錯誤"));
+    callback(new Error("確認新密碼是否錯誤"));
   }
   if (val == loginProfileForm.newPassword) {
     callback();
   } else {
-    return callback(new Error("密碼不一致"));
+    callback(new Error("密碼不一致"));
   }
 }
 
