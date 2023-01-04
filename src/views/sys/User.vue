@@ -83,7 +83,7 @@ const dialogOpenHandle = (key, data) => {
 
 // form
 const labelPosition = ref("right");
-let editFormRefs = ref(null);
+const editFormRefs = ref(null);
 
 // TODO
 let editForm = reactive({
@@ -136,8 +136,8 @@ const editRule = reactive({
 });
 
 const editHandle = (id) => {
-  http.get("/sys/role/info/" + id).then((res) => {
-    editForm = reactive(res.data);
+  http.get("/sys/user/info/" + id).then((res) => {
+    editForm = reactive(res.data.info);
     visibleDialog.value = true;
   });
 };
@@ -210,6 +210,7 @@ function validateRepeatPassword(rule, val, callback) {
   }
 }
 
+// TODO 驗證 warning
 const resetPasswordRule = reactive({
   oldPassword: [{ required: true, message: "請輸入舊密碼", trigger: "blur" }],
   newPassword: [{ required: true, message: "請輸入新密碼", trigger: "blur" }],
@@ -479,10 +480,10 @@ onBeforeMount(() => {
         <el-form-item label="帳號" prop="username">
           <el-input v-model="editForm.username" />
         </el-form-item>
-        <el-form-item label="密碼" prop="password">
+        <el-form-item label="密碼" prop="password" v-if="!editForm.id">
           <el-input v-model="editForm.password" type="password" show-password />
         </el-form-item>
-        <el-form-item label="確認密碼" prop="checkPassword">
+        <el-form-item label="確認密碼" prop="checkPassword" v-if="!editForm.id">
           <el-input
             v-model="editForm.checkPassword"
             type="password"

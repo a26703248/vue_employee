@@ -252,16 +252,18 @@ export default [
     method: "get",
     response: () => {
       RESULT.data = {
-        info: [
-          {
-            id: 1,
-            name: "外部使用者",
-            code: "anonymous",
-            description: "text1",
-            status: 1,
-          },
-        ],
-        menuIds: [1, 12, 121],
+        info: {
+          id: 1,
+          avatar: "#",
+          username: "admin",
+          fullName: "管理員",
+          roles: [{ name: "anonymous" }, { name: "admin" }],
+          email: "XXX@gmail.com",
+          mobile: "0911111111",
+          status: 1,
+          createdDate: "2022-01-01 00:00:00",
+        },
+        menuIds: [1, 2],
       };
       return RESULT;
     },
@@ -276,7 +278,7 @@ export default [
             id: 1,
             avatar: "#",
             username: "admin",
-            fullName:"管理員",
+            fullName: "管理員",
             roles: [{ name: "anonymous" }, { name: "admin" }],
             email: "XXX@gmail.com",
             mobile: "0911111111",
@@ -287,7 +289,7 @@ export default [
             id: 2,
             avatar: "#",
             username: "develop",
-            fullName:"開發人員",
+            fullName: "開發人員",
             roles: [{ name: "anonymous" }],
             email: "XXX@gmail.com",
             mobile: "0911111111",
