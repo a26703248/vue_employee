@@ -3,6 +3,7 @@ import { reactive, ref, onBeforeMount } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import http from "@/axios/index.js";
 
+
 // table
 let searchForm = reactive({});
 const batchDeleteDis = ref(true);
@@ -446,11 +447,12 @@ onBeforeMount(() => {
         </el-form-item>
         <el-form-item label="帳號" prop="username">
           <el-input v-model="editForm.username" />
+          <div>初始密碼為: 88888888，新增完畢請盡速修改</div>
         </el-form-item>
-        <el-form-item label="密碼" prop="password" v-if="!editForm.id">
+        <el-form-item label="密碼" prop="password" v-if="false">
           <el-input v-model="editForm.password" type="password" show-password />
         </el-form-item>
-        <el-form-item label="確認密碼" prop="checkPassword" v-if="!editForm.id">
+        <el-form-item label="確認密碼" prop="checkPassword" v-if="false">
           <el-input
             v-model="editForm.checkPassword"
             type="password"
