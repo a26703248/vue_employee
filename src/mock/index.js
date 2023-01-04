@@ -190,15 +190,13 @@ export default [
     method: "get",
     response: () => {
       RESULT.data = {
-        info: [
-          {
-            id: 1,
-            name: "外部使用者",
-            code: "anonymous",
-            description: "text1",
-            status: 1,
-          },
-        ],
+        info: {
+          id: 1,
+          name: "外部使用者",
+          code: "anonymous",
+          description: "text1",
+          status: 1,
+        },
         menuIds: [1, 12, 121],
       };
       return RESULT;

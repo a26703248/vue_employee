@@ -29,12 +29,12 @@ const getRoleList = () => {
       params: {
         name: searchForm.name,
         currentPage: currentPage.value,
-        size: pageSize.value,
+        pageSize: pageSize.value,
       },
     })
     .then((res) => {
       tableData.value = res.data.records;
-      size.value = res.data.pageSize;
+      pageSize.value = res.data.pageSize;
       currentPage.value = res.data.currentPage;
       total.value = res.data.total;
     });
@@ -82,7 +82,7 @@ const dialogOpenHandle = (key, data) => {
 // form
 const size = ref("default");
 const labelPosition = ref("right");
-let editFormRefs = ref();
+let editFormRefs = ref(null);
 
 let editForm = reactive({
   name: "",
@@ -104,7 +104,7 @@ const editRule = reactive({
 
 const editHandle = (id) => {
   http.get("/sys/role/info/" + id).then((res) => {
-    editForm = reactive(res.data);
+    editForm = reactive(res.data.info);
     visibleDialog.value = true;
   });
 };
