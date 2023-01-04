@@ -51,7 +51,7 @@ const deleteHandle = (id) => {
   }
   let data = new FormData();
   data.append("ids", ids);
-  http.post("/sys/role/delete", data).then((res) => {
+  http.post("/sys/user/delete", data).then((res) => {
     ElMessage({
       showClose: true,
       message: "操作成功",
