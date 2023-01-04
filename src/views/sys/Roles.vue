@@ -276,7 +276,7 @@ onBeforeMount(() => {
         <el-button type="info" @click="getRoleList()">搜索</el-button>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="visibleDialog = true">新增</el-button>
+        <el-button type="primary" @click="dialogOpenHandle('save')">新增</el-button>
       </el-form-item>
       <el-form-item>
         <el-popconfirm title="確定是否批量刪除" @confirm="deleteHandle()">

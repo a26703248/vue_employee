@@ -135,7 +135,6 @@ export default [
     },
   },
   // menu manager restAPI test
-  // select
   {
     url: "/sys/menu/info/:id",
     method: "get",
@@ -157,7 +156,6 @@ export default [
       return RESULT;
     },
   },
-  // update
   {
     url: "/sys/menu/update/:id",
     method: "post",
@@ -165,7 +163,6 @@ export default [
       return RESULT;
     },
   },
-  // create
   {
     url: "/sys/menu/save",
     method: "post",
@@ -173,7 +170,6 @@ export default [
       return RESULT;
     },
   },
-  // delete
   {
     url: "/sys/menu/delete/:id",
     method: "post",
@@ -280,6 +276,7 @@ export default [
             id: 1,
             avatar: "#",
             username: "admin",
+            fullName:"管理員",
             roles: [{ name: "anonymous" }, { name: "admin" }],
             email: "XXX@gmail.com",
             mobile: "0911111111",
@@ -290,6 +287,7 @@ export default [
             id: 2,
             avatar: "#",
             username: "develop",
+            fullName:"開發人員",
             roles: [{ name: "anonymous" }],
             email: "XXX@gmail.com",
             mobile: "0911111111",

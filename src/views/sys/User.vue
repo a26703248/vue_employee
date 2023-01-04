@@ -83,25 +83,56 @@ const dialogOpenHandle = (key, data) => {
 
 // form
 const labelPosition = ref("right");
-let editFormRefs = ref();
+let editFormRefs = ref(null);
 
 // TODO
 let editForm = reactive({
-  name: "",
-  code: "",
-  description: "",
+  username: "",
+  fullName: "",
+  password: "",
+  checkPassword: "",
+  email: "",
+  mobile: "",
   status: 1,
 });
 
+function validateCreatedRepeatPassword(rule, val, callback) {
+  if (val === "") {
+    callback(new Error("確認新密碼是否錯誤"));
+  }
+  if (val === editForm.password) {
+    callback();
+  } else {
+    callback(new Error("密碼不一致"));
+  }
+}
+
+const validateMobile = (rule, val, callback) => {
+  if (val === "") {
+    callback(new Error("確認行動電話格式是否錯誤"));
+  }
+  if (/^09\d{8,10}$/.test(val)) {
+    callback();
+  } else {
+    callback(new Error("確認行動電話格式是否錯誤"));
+  }
+};
+
 const editRule = reactive({
-  name: { required: true, message: "請輸入名稱", trigger: "blur" },
-  code: { required: true, message: "請輸入唯一編號", trigger: "blur" },
-  description: {},
-  status: {
-    required: true,
-    message: "請選擇狀態",
-    trigger: "change",
-  },
+  fullName: [{ required: true, message: "請輸入名稱", trigger: "blur" }],
+  username: [{ required: true, message: "請輸入帳號", trigger: "blur" }],
+  password: [{ required: true, message: "請輸入密碼", trigger: "blur" }],
+  checkPassword: [
+    { required: true, message: "請確認密碼", trigger: "blur" },
+    { validator: validateCreatedRepeatPassword, trigger: "blur" },
+  ],
+  email: [
+    { type: "email", message: "Email 格式錯誤", trigger: ["blur", "change"] },
+  ],
+  mobile: [
+    { required: true, message: "請輸入行動電話", trigger: "blur" },
+    { validator: validateMobile, trigger: ["blur", "change"] },
+  ],
 });
 
 const editHandle = (id) => {
@@ -325,7 +356,7 @@ onBeforeMount(() => {
       <el-form-item>
         <el-input
           v-model="searchForm.username"
-          placeholder="搜尋帳號名稱"
+          placeholder="搜尋名稱"
           clearable
         ></el-input>
       </el-form-item>
@@ -333,7 +364,7 @@ onBeforeMount(() => {
         <el-button type="info" @click="getUserList()">搜索</el-button>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="visibleDialog = true">新增</el-button>
+        <el-button type="primary" @click="dialogOpenHandle('save')">新增</el-button>
       </el-form-item>
       <el-form-item>
         <el-popconfirm title="確定是否批量刪除" @confirm="deleteHandle()">
@@ -359,7 +390,7 @@ onBeforeMount(() => {
           <el-avatar size="small" :src="scoped.row.avatar"></el-avatar>
         </template>
       </el-table-column>
-      <el-table-column prop="username" label="帳號名稱" width="120" />
+      <el-table-column prop="fullName" label="名稱" width="120" />
       <el-table-column prop="roles" label="角色">
         <template #="scoped">
           <el-tag
@@ -428,9 +459,9 @@ onBeforeMount(() => {
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     />
-    <!-- form -->
+    <!-- create form -->
     <el-dialog
-      title="新增"
+      title="新增帳號"
       ref="formDialog"
       v-model="visibleDialog"
       width="30%"
@@ -442,14 +473,27 @@ onBeforeMount(() => {
         label-width="auto"
         :label-position="labelPosition"
       >
-        <el-form-item label="角色名稱" prop="name">
-          <el-input v-model="editForm.name" />
+        <el-form-item label="名稱" prop="fullName">
+          <el-input v-model="editForm.fullName" />
         </el-form-item>
-        <el-form-item label="唯一編號" prop="code">
-          <el-input v-model="editForm.code" />
+        <el-form-item label="帳號" prop="username">
+          <el-input v-model="editForm.username" />
         </el-form-item>
-        <el-form-item label="描述" prop="description">
-          <el-input v-model="editForm.description" />
+        <el-form-item label="密碼" prop="password">
+          <el-input v-model="editForm.password" type="password" show-password />
+        </el-form-item>
+        <el-form-item label="確認密碼" prop="checkPassword">
+          <el-input
+            v-model="editForm.checkPassword"
+            type="password"
+            show-password
+          />
+        </el-form-item>
+        <el-form-item label="Email" prop="email">
+          <el-input v-model="editForm.email" />
+        </el-form-item>
+        <el-form-item label="行動電話" prop="mobile">
+          <el-input v-model="editForm.mobile" />
         </el-form-item>
         <el-form-item label="狀態" prop="status">
           <el-radio-group v-model="editForm.status">
@@ -506,12 +550,15 @@ onBeforeMount(() => {
         <!-- button -->
         <el-form-item label-width="80" edit-form-button>
           <el-button @click="visibleDialog = false">取消</el-button>
-          <el-button type="primary" @click="submitResetPassword(resetPasswordFormRefs)"
+          <el-button
+            type="primary"
+            @click="submitResetPassword(resetPasswordFormRefs)"
             >重設</el-button
           >
         </el-form-item>
       </el-form>
     </el-dialog>
+    <!-- role -->
     <el-dialog
       title="分配權限"
       ref="permDialog"

@@ -117,7 +117,7 @@ function validateRepeatPassword(rule, val, callback) {
   if (val === "") {
     callback(new Error("確認新密碼是否錯誤"));
   }
-  if (val == loginProfileForm.newPassword) {
+  if (val === loginProfileForm.newPassword) {
     callback();
   } else {
     callback(new Error("密碼不一致"));
