@@ -186,7 +186,7 @@ export default [
     },
   },
   {
-    url: RegExp("/sys/role/info/*"),
+    url: RegExp("/sys/user/info/*"),
     method: "get",
     response: () => {
       RESULT.data = {
@@ -303,7 +303,7 @@ export default [
     },
   },
   {
-    url: RegExp("/sys/role/perm/*"),
+    url: RegExp("/sys/user/role/*"),
     method: "get",
     response: () => {
       return RESULT;

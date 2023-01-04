@@ -152,7 +152,7 @@ let permForm = reactive({});
 
 const permHandle = (id) => {
     permVisibleDialog.value = true;
-    http.get("/sys/role/info" + id).then(res => {
+    http.get("/sys/role/info/" + id).then(res => {
       permDialogTree.value.setCheckedKeys(res.data.menuIds)
       permForm = res.data.info;
     })

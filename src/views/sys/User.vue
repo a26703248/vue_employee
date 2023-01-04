@@ -1,6 +1,6 @@
 <script setup>
 import { reactive, ref, onBeforeMount } from "vue";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 import http from "@/axios/index.js";
 
 // table
@@ -85,7 +85,6 @@ const dialogOpenHandle = (key, data) => {
 const labelPosition = ref("right");
 const editFormRefs = ref(null);
 
-// TODO
 let editForm = reactive({
   username: "",
   fullName: "",
@@ -147,7 +146,7 @@ const submitForm = async (formEl) => {
   await formEl.validate((valid, fields) => {
     if (valid) {
       http
-        .post("/sys/role/" + (editForm.id ? "update" : "save"), editForm)
+        .post("/sys/user/" + (editForm.id ? "update" : "save"), editForm)
         .then((res) => {
           ElMessage({
             showClose: true,
@@ -185,7 +184,7 @@ let roleForm = reactive({});
 
 const userHandle = (id) => {
   roleVisibleDialog.value = true;
-  http.get("/sys/role/info" + id).then((res) => {
+  http.get("/sys/user/info/" + id).then((res) => {
     roleDialogTree.value.setCheckedKeys(res.data.menuIds);
     roleForm = res.data.info;
   });
@@ -217,9 +216,24 @@ const resetPasswordRule = reactive({
   checkNewPassword: [{ validator: validateRepeatPassword, trigger: "blur" }],
 });
 
-const resetPasswordHandle = (id) => {
-  resetPasswordForm.id = id;
-  resetPasswordVisibleDialog.value = true;
+const resetPasswordHandle = ({ id, fullName }) => {
+  // 亂碼 + email
+  ElMessageBox.confirm(`確認是否繼續重設 "${fullName}" 使用者密碼?`, "提示", {
+    confirmButtonText: "確認",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+    .then(() => {
+      http.post("/sys/user/rest/password/" + id);
+      ElMessage({
+        type: "success",
+        message: "密碼重設成功",
+      });
+    })
+    .catch(() => {});
+  // 可輸入密碼
+  // resetPasswordForm.id = id;
+  // resetPasswordVisibleDialog.value = true;
 };
 
 const submitResetPassword = async (formEl) => {
@@ -273,62 +287,13 @@ const defaultProps = {
   label: "name",
 };
 
-const roleData = ref([
-  {
-    id: 1,
-    label: "Level one 1",
-    children: [
-      {
-        id: 4,
-        label: "Level two 1-1",
-        children: [
-          {
-            id: 9,
-            label: "Level three 1-1-1",
-          },
-          {
-            id: 10,
-            label: "Level three 1-1-2",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: 2,
-    label: "Level one 2",
-    children: [
-      {
-        id: 5,
-        label: "Level two 2-1",
-      },
-      {
-        id: 6,
-        label: "Level two 2-2",
-      },
-    ],
-  },
-  {
-    id: 3,
-    label: "Level one 3",
-    children: [
-      {
-        id: 7,
-        label: "Level two 3-1",
-      },
-      {
-        id: 8,
-        label: "Level two 3-2",
-      },
-    ],
-  },
-]);
+const roleData = ref([]);
 
 const submitRoleFormHandle = () => {
   let menuIds = roleDialogTree.value.getCheckedKeys();
   let formData = new FormData();
   formData.append("menuIds", menuIds);
-  http.post("/sys/role/perm/" + roleFormRefs.id, formData).then((res) => {
+  http.post("/sys/user/role/" + roleFormRefs.id, formData).then((res) => {
     ElMessage({
       showClose: true,
       type: "success",
@@ -345,7 +310,7 @@ const submitRoleFormHandle = () => {
 onBeforeMount(() => {
   getUserList();
   http.get("/sys/role/list").then((res) => {
-    roleData.value = res.data;
+    roleData.value = res.data.records;
   });
 });
 </script>
@@ -365,7 +330,9 @@ onBeforeMount(() => {
         <el-button type="info" @click="getUserList()">搜索</el-button>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="dialogOpenHandle('save')">新增</el-button>
+        <el-button type="primary" @click="dialogOpenHandle('save')"
+          >新增</el-button
+        >
       </el-form-item>
       <el-form-item>
         <el-popconfirm title="確定是否批量刪除" @confirm="deleteHandle()">
@@ -426,7 +393,7 @@ onBeforeMount(() => {
           <el-divider direction="vertical" />
           <el-button
             type="primary"
-            @click="dialogOpenHandle('resetPassword', scoped.row.id)"
+            @click="dialogOpenHandle('resetPassword', scoped.row)"
             link
             >重設密碼</el-button
           >
