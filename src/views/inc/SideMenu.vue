@@ -10,6 +10,8 @@ import {
 } from "@element-plus/icons-vue";
 import { reactive, ref, computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
+import { menuStore } from "@/stores/menu.js";
+  import { storeToRefs } from "pinia";
 const route = useRoute();
 
 const menuItem = menuStore();
