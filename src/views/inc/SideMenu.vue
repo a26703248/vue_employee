@@ -12,46 +12,9 @@ import { reactive, ref, computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 const route = useRoute();
 
-const menuList = [
-  {
-    title: "帳戶管理",
-    name: "AccountMana",
-    icon: "setting",
-    component: "",
-    path: "",
-    children: [
-      {
-        title: "帳戶設定",
-        name: "SysUser",
-        component: "sys/User",
-        icon: "userFilled",
-        path: "/sys/user",
-      },
-      {
-        title: "權限設定",
-        name: "SysRole",
-        component: "sys/Roles",
-        icon: "lock",
-        path: "/sys/roles",
-      },
-      // {
-      //   title: "選單設定",
-      //   name: "SysMenu",
-      //   component: "sys/Menu",
-      //   icon: "document",
-      //   path: "/sys/menu",
-      // },
-    ],
-  },
-  {
-    title: "系統工具",
-    name: "SystemTool",
-    icon: "operation",
-    component: "",
-    path: "",
-    children: [],
-  },
-];
+const menuItem = menuStore();
+const { menu, tabsValue } = storeToRefs(menuItem);
+const menuList = menu;
 
 let iconMap = {
   document: Document,
@@ -63,17 +26,13 @@ let iconMap = {
   userFilled: UserFilled,
 };
 
-let activeName = computed(() => {
-  let menuNameList = ["AccountMana", "SysUser", "SysRole", "SysMenu"]
-  return menuNameList.includes(route.name)?route.name:"Index";
-})
 </script>
 
 <template>
   <el-menu
     active-text-color="#ffd04b"
     background-color="#545c64"
-    :default-active="activeName"
+    default-active="Index"
     class="el-menu-vertical"
     text-color="#fff"
   >
