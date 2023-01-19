@@ -3,7 +3,6 @@ import { reactive, ref, onBeforeMount } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import http from "@/axios/index.js";
 
-
 // table
 let searchForm = reactive({});
 const batchDeleteDis = ref(true);

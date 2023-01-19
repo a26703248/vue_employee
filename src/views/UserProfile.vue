@@ -99,6 +99,7 @@ import { userAccountStore } from "@/stores/user.js";
 import { storeToRefs } from "pinia";
 import { ElMessage } from "element-plus";
 
+
 // login
 const account = userAccountStore();
 const { userAccount } = storeToRefs(account);
@@ -126,7 +127,7 @@ function validateRepeatPassword(rule, val, callback) {
 
 // profile
 const profileFormRef = ref();
-const profileForm = reactive({
+let profileForm = reactive({
   employeeId: 0,
   department: "",
   jobName: "",
@@ -174,17 +175,12 @@ const submitForm = async (formEl, formName) => {
   });
 };
 
-function getUserProfile(id) {
-  http.post("/user/info", id).then((res) => {
-    Object.entries(res.data).forEach((obj) => {
-      profileForm[obj[0]] = obj[1];
-    });
-  });
-}
 
 onBeforeMount(() => {
-  let id = -1;
-  getUserProfile(id);
+  let id = 8;
+  // userAccountStore.userAccount;
+  debugger
+  // profileForm = (id);
 });
 </script>
 

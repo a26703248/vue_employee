@@ -1,10 +1,7 @@
-import {
-  createRouter,
-  createWebHistory,
-  onBeforeRouteUpdate,
-} from "vue-router";
+import { createRouter, createWebHistory, createWebHashHistory } from "vue-router";
 import Home from "@/views/Home.vue";
 import Index from "@/views/Index.vue";
+import User from "@/views/sys/User.vue";
 import http from "@/axios/index.js";
 import { menuStore } from "@/stores/menu.js";
 import { storeToRefs } from "pinia";
@@ -27,22 +24,6 @@ const router = createRouter({
           name: "userProfile",
           component: () => import("@/views/UserProfile.vue"),
         },
-        // TODO 暫時不用
-        // {
-        // path: '/sys/menu',
-        // name: 'SysMenu',
-        // component: () => import("@/views/sys/Menu.vue")
-        // },
-        {
-          path: "/sys/user",
-          name: "SysUser",
-          component: () => import("@/views/sys/User.vue"),
-        },
-        {
-          path: "/sys/roles",
-          name: "SysRole",
-          component: () => import("@/views/sys/Roles.vue"),
-        },
       ],
     },
     {
@@ -50,10 +31,15 @@ const router = createRouter({
       name: "login",
       component: () => import("../views/Login.vue"),
     },
+    // {
+    //   path:"/:catchAll(.*)",
+    //   component: () => import("@/views/404.vue"),
+    //   hidden: true
+    // }
   ],
 });
 
-router.beforeEach((to, form, next) => {
+router.beforeEach(async (to, form, next) => {
   let menuItem = menuStore();
   const { menu, hasRouter } = storeToRefs(menuItem);
   if (!hasRouter.value) {
@@ -64,18 +50,22 @@ router.beforeEach((to, form, next) => {
       menuItem.setAuthorities(resp.data.authorities);
       // 動態路由
       resp.data.nav.forEach((menu) => {
+        let childrenArr = new Array();
         if (menu.children) {
-          menu.children.forEach((children) => {
-            menuToRoute(children);
+          menu.children.forEach((c) => {
+            childrenArr.push(menuToRoute(c));
           });
         }
+        menu.children = childrenArr;
+        menu.path = menu.path ? menu.path : "";
+        router.addRoute("home", menu);
       });
       menuItem.changeRouterStatus(true);
-      router.addRoute(resp.data.nav);
     });
   }
   next();
 });
+
 
 const menuToRoute = (menu) => {
   if (!menu.component) {
@@ -84,10 +74,8 @@ const menuToRoute = (menu) => {
   let route = {
     path: menu.path,
     name: menu.name,
-    meta: {
-      icon: menu.icon,
-      title: menu.title,
-    },
+    icon: menu.icon,
+    title: menu.title,
   };
   // issue https://github.com/sveltejs/vite-plugin-svelte/issues/175#issuecomment-937431823
   let comps = import.meta.glob("@/views/**/*.vue");

@@ -1,7 +1,16 @@
 <script setup>
 import SideMenu from "@/views/inc/SideMenu.vue";
 import Header from "@/views/inc/Header.vue";
-// TODO 動態路由 tab
+import {onBeforeMount} from "vue";
+import {getUserProfile} from "@/glob/globalFunc.js";
+import { userAccountStore } from "@/stores/user.js";
+
+onBeforeMount(() => {
+  let id = 8;
+  // let info = getUserProfile(id);
+  // let userAccountItem = userAccountStore();
+  // userAccountItem.setUser(info);
+})
 </script>
 
 <template>

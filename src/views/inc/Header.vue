@@ -1,6 +1,6 @@
 <script setup>
 import { ArrowDown } from "@element-plus/icons-vue";
-import { reactive, ref } from "vue";
+import { reactive, ref, onBeforeMount } from "vue";
 import { userAccountStore } from "@/stores/user.js";
 import { storeToRefs } from "pinia";
 import { tokenStore } from "@/stores/token.js";
@@ -23,6 +23,7 @@ function logout() {
     router.push("/login");
   });
 }
+
 </script>
 
 <template>
