@@ -1,4 +1,8 @@
-import { createRouter, createWebHistory, createWebHashHistory } from "vue-router";
+import {
+  createRouter,
+  createWebHistory,
+  createWebHashHistory,
+} from "vue-router";
 import Home from "@/views/Home.vue";
 import Index from "@/views/Index.vue";
 import User from "@/views/sys/User.vue";
@@ -31,11 +35,6 @@ const router = createRouter({
       name: "login",
       component: () => import("../views/Login.vue"),
     },
-    // {
-    //   path:"/:catchAll(.*)",
-    //   component: () => import("@/views/404.vue"),
-    //   hidden: true
-    // }
   ],
 });
 
@@ -43,7 +42,7 @@ router.beforeEach(async (to, form, next) => {
   let menuItem = menuStore();
   const { menu, hasRouter } = storeToRefs(menuItem);
   if (!hasRouter.value) {
-    http.get("/sys/menu/nav").then((resp) => {
+    await http.get("/sys/menu/nav").then((resp) => {
       // 取得 menuList
       menuItem.setMenu(resp.data.nav);
       // 判斷是否有權限
@@ -62,10 +61,11 @@ router.beforeEach(async (to, form, next) => {
       });
       menuItem.changeRouterStatus(true);
     });
+    next({...to, replace:true});
+  } else {
+    next();
   }
-  next();
 });
-
 
 const menuToRoute = (menu) => {
   if (!menu.component) {
