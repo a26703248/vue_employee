@@ -5,6 +5,7 @@ export const tokenStore = defineStore("token", () => {
   const token = ref("");
   function setToken(value) {
     token.value = value;
+    localStorage.setItem("token", value);
   }
   function resetToken() {
     token.value = "";
@@ -13,5 +14,5 @@ export const tokenStore = defineStore("token", () => {
     token,
     setToken,
     resetToken,
-  }
+  };
 });

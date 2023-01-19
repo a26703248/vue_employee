@@ -11,7 +11,7 @@ import {
 import { reactive, ref, computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { menuStore } from "@/stores/menu.js";
-  import { storeToRefs } from "pinia";
+import { storeToRefs } from "pinia";
 const route = useRoute();
 
 const menuItem = menuStore();
@@ -27,7 +27,6 @@ let iconMap = {
   lock: Lock,
   userFilled: UserFilled,
 };
-
 </script>
 
 <template>

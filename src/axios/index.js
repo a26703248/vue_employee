@@ -4,7 +4,7 @@ import { ElMessage } from "element-plus";
 // 共用參數配置
 let config = {
   timeout: 100000,
-  baseURL: "http://localhost:5173",
+  baseURL: "http://localhost:8080",
   headers: {
     "Content-type": "application/json; charset=utf-8",
   },

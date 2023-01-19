@@ -7,6 +7,7 @@ import Home from "@/views/Home.vue";
 import Index from "@/views/Index.vue";
 import http from "@/axios/index.js";
 import { menuStore } from "@/stores/menu.js";
+import { storeToRefs } from "pinia";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -53,33 +54,25 @@ const router = createRouter({
 });
 
 router.beforeEach((to, form, next) => {
-  const menuItem = menuStore();
-  const { setMenu, setAuthorities, hasRouter, changeRouterStatus } = menuItem;
-  if (!hasRouter) {
-    http
-      .get("/sys/main/nav", {
-        header: {
-          Authorization: localStorage.getItem("token"),
-        },
-      })
-      .then((resp) => {
-        // 取得 menuList
-        setMenu(resp.data.nav);
-        // 判斷是否有權限
-        setAuthorities(resp.data.authorities);
-        // 動態路由
-        resp.data.nav.forEach((menu) => {
-          if (menu.children) {
-            menu.children.forEach((children) => {
-              let route = menuToRoute(children);
-              if (route) {
-                router.addRoute(children.pathParent, route);
-              }
-            });
-          }
-        });
-        changeRouterStatus(true);
+  let menuItem = menuStore();
+  const { menu, hasRouter } = storeToRefs(menuItem);
+  if (!hasRouter.value) {
+    http.get("/sys/menu/nav").then((resp) => {
+      // 取得 menuList
+      menuItem.setMenu(resp.data.nav);
+      // 判斷是否有權限
+      menuItem.setAuthorities(resp.data.authorities);
+      // 動態路由
+      resp.data.nav.forEach((menu) => {
+        if (menu.children) {
+          menu.children.forEach((children) => {
+            menuToRoute(children);
+          });
+        }
       });
+      menuItem.changeRouterStatus(true);
+      router.addRoute(resp.data.nav);
+    });
   }
   next();
 });

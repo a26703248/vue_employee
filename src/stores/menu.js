@@ -4,7 +4,8 @@ import { reactive, ref, onBeforeMount } from "vue";
 export const menuStore = defineStore("menu", () => {
   const menu = reactive([]);
   const authorities = ref([]);
-  const hasRouter = ref(sessionStorage.getItem("hasRoute"));
+  // const hasRouter = ref(sessionStorage.getItem("hasRoute"));
+  const hasRouter = ref(false);
 
   function setMenu(value) {
     menu.push(...value);
