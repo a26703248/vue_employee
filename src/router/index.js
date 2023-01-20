@@ -63,7 +63,7 @@ router.beforeEach(async (to, form, next) => {
     next({...to, replace:true});
   } else {
     router.getRoutes().forEach(e => {
-      if(e.path == to.fullPath){
+      if(e.path == to.fullPath && e.path != "/"){
         menuItem.setActiveMenu(e.name)
         return;
       }

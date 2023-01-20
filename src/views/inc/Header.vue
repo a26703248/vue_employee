@@ -6,11 +6,17 @@ import { storeToRefs } from "pinia";
 import { tokenStore } from "@/stores/token.js";
 import { useRouter } from "vue-router";
 import http from "@/axios/index.js";
+import {getUserInfo} from "@/glob/globalFunc.js";
 
+// router
 const router = useRouter();
+
+// account
 const account = userAccountStore();
 const {userAccount} = storeToRefs(account)
 const {resetUserAccount} = account;
+
+// token
 const token = tokenStore();
 const {resetToken} = token;
 
@@ -23,6 +29,10 @@ function logout() {
     router.push("/login");
   });
 }
+
+onBeforeMount(() => {
+  getUserInfo();
+})
 
 </script>
 

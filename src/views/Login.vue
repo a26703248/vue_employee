@@ -70,7 +70,6 @@ const submitForm = async (formEl) => {
     if (valid) {
       http.post("/login?" + qs.stringify(loginForm), {}).then((res) => {
         token.setToken(res.data.token);
-        userAccount.setUser(res.data);
         router.push("/index");
       });
     } else {

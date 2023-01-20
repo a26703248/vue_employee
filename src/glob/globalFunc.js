@@ -1,24 +1,20 @@
-import {menuStore} from "@/stores/menu.js";
+import { menuStore } from "@/stores/menu.js";
+import { userAccountStore } from "@/stores/user.js";
 import http from "@/axios/index.js";
 
 // TODO 操作權限
 const hasAuth = (actionKey) => {
   const menuItem = menuStore();
-  const {authorities} = menuItem;
+  const { authorities } = menuItem;
   return authorities.indexOf(actionKey) > -1;
-}
+};
 
-const getUserProfile = (id) => {
-  let profileForm = new Object();
-  http.post("/user/info", id).then((res) => {
-    Object.entries(res.data).forEach((obj) => {
-      profileForm[obj[0]] = obj[1];
-    });
+const getUserInfo = () => {
+  const userItem = userAccountStore();
+  http.get("/user/info").then((res) => {
+    userItem.setUser(res.data);
   });
-  return profileForm;
-}
+  return true;
+};
 
-export {
-  hasAuth,
-  getUserProfile,
-}
+export { hasAuth, getUserInfo };
