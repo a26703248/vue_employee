@@ -1,5 +1,6 @@
 import axios from "axios";
 import { ElMessage } from "element-plus";
+import {useRouter} from "vue-router";
 
 // 共用參數配置
 let config = {
@@ -38,18 +39,21 @@ http.interceptors.response.use(
     if (error) {
       error.message = error.response.data.msg;
     }
+    let msg = null;
     switch (error.response.status) {
       case 401:
-        // history.pushState(null, null, "/login");
+        msg = "權限不足";
         break;
       case 404:
-        // history.pushState(null, null, "/login");
+        msg = "找不到該頁面,請聯絡管理員";
         break;
+      default:
+        msg = "發生錯誤請聯絡管理員";
     }
 
     ElMessage({
       showClose: true,
-      message: "發生錯誤請聯絡管理員",
+      message: msg,
       type: "error",
       duration: 3000,
     });
