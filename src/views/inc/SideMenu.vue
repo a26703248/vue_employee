@@ -15,8 +15,10 @@ import { storeToRefs } from "pinia";
 const route = useRoute();
 
 const menuItem = menuStore();
-const { menu, tabsValue } = storeToRefs(menuItem);
+const { menu, activeMenu } = storeToRefs(menuItem);
 const menuList = menu;
+// TODO 網址直接訪問左側標籤高量位置錯誤
+
 
 let iconMap = {
   document: Document,
@@ -33,7 +35,7 @@ let iconMap = {
   <el-menu
     active-text-color="#ffd04b"
     background-color="#545c64"
-    default-active="Index"
+    :default-active="activeMenu"
     class="el-menu-vertical"
     text-color="#fff"
   >

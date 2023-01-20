@@ -5,7 +5,6 @@ import {
 } from "vue-router";
 import Home from "@/views/Home.vue";
 import Index from "@/views/Index.vue";
-import User from "@/views/sys/User.vue";
 import http from "@/axios/index.js";
 import { menuStore } from "@/stores/menu.js";
 import { storeToRefs } from "pinia";
@@ -41,7 +40,7 @@ const router = createRouter({
 router.beforeEach(async (to, form, next) => {
   let menuItem = menuStore();
   const { menu, hasRouter } = storeToRefs(menuItem);
-  if (!hasRouter.value) {
+  if (!hasRouter.value && localStorage.getItem("token")) {
     await http.get("/sys/menu/nav").then((resp) => {
       // 取得 menuList
       menuItem.setMenu(resp.data.nav);
@@ -63,6 +62,12 @@ router.beforeEach(async (to, form, next) => {
     });
     next({...to, replace:true});
   } else {
+    router.getRoutes().forEach(e => {
+      if(e.path == to.fullPath){
+        menuItem.setActiveMenu(e.name)
+        return;
+      }
+    })
     next();
   }
 });

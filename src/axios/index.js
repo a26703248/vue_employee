@@ -38,13 +38,12 @@ http.interceptors.response.use(
     if (error) {
       error.message = error.response.data.msg;
     }
-    // TODO 解決 axios 與 vue router 問題
     switch (error.response.status) {
       case 401:
-        // router.push("/login");
+        // history.pushState(null, null, "/login");
         break;
       case 404:
-        // router.push("/");
+        // history.pushState(null, null, "/login");
         break;
     }
 

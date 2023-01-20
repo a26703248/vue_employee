@@ -6,6 +6,7 @@ export const menuStore = defineStore("menu", () => {
   const authorities = ref([]);
   // const hasRouter = ref(sessionStorage.getItem("hasRoute"));
   const hasRouter = ref(false);
+  const activeMenu = ref("Index");
 
   function setMenu(value) {
     menu.push(...value);
@@ -15,11 +16,14 @@ export const menuStore = defineStore("menu", () => {
     menu.splice(0, menu.length);
   }
 
+  function setActiveMenu(value) {
+    activeMenu.value = value;
+  }
+
   function changeRouterStatus(value) {
     hasRouter.value = value;
     sessionStorage.setItem("hasRoute", value);
   }
-
 
   function setAuthorities(value) {
     authorities.value.push(...value);
@@ -34,11 +38,13 @@ export const menuStore = defineStore("menu", () => {
     setAuthorities,
     resetAuthorities,
     // menu
+    setActiveMenu,
+    activeMenu,
     menu,
     setMenu,
     resetMenu,
     // dynamic route status
     hasRouter,
     changeRouterStatus,
-  }
+  };
 });
