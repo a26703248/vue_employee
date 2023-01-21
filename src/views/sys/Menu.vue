@@ -9,7 +9,7 @@ const labelPosition = ref("right");
 let editFormRefs = ref();
 
 let editForm = reactive({
-  parentId: 1,
+  parentId: null,
   name: "",
   perms: "",
   icon: "",
