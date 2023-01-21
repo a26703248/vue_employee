@@ -27,7 +27,7 @@ const getUserList = () => {
   http
     .get("/sys/user/list", {
       params: {
-        name: searchForm.username,
+        username: searchForm.username,
         currentPage: currentPage.value,
         pageSize: pageSize.value,
       },
@@ -49,13 +49,12 @@ const deleteHandle = (id) => {
       ids.push(e.id);
     });
   }
-  let data = new FormData();
-  data.append("ids", ids);
-  http.post("/sys/user/delete", data).then((res) => {
+  http.post("/sys/user/delete", ids).then((res) => {
     ElMessage({
       showClose: true,
       message: "操作成功",
       type: "success",
+      duration: 3000,
       onClose: () => {
         getUserList();
       },
@@ -74,8 +73,8 @@ const dialogOpenHandle = (key, data) => {
   } else if (key === "update") {
     resetEditForm();
     editHandle(data);
-  } else if (key === "userHandle") {
-    userHandle(data);
+  } else if (key === "userAuthHandle") {
+    userAuthHandle(data);
   } else if (key === "resetPassword") {
     resetPasswordHandle(data);
   }
@@ -87,7 +86,6 @@ const editFormRefs = ref(null);
 
 let editForm = reactive({
   username: "",
-  fullName: "",
   password: "",
   checkPassword: "",
   email: "",
@@ -118,7 +116,6 @@ const validateMobile = (rule, val, callback) => {
 };
 
 const editRule = reactive({
-  fullName: [{ required: true, message: "請輸入名稱", trigger: "blur" }],
   username: [{ required: true, message: "請輸入帳號", trigger: "blur" }],
   password: [{ required: true, message: "請輸入密碼", trigger: "blur" }],
   checkPassword: [
@@ -136,7 +133,7 @@ const editRule = reactive({
 
 const editHandle = (id) => {
   http.get("/sys/user/info/" + id).then((res) => {
-    editForm = reactive(res.data.info);
+    editForm = reactive(res.data);
     visibleDialog.value = true;
   });
 };
@@ -156,8 +153,8 @@ const submitForm = async (formEl) => {
               getUserList();
             },
           });
+          visibleDialog.value = false;
         });
-      visibleDialog.value = false;
     } else {
       console.log("error submit!", fields);
       return false;
@@ -182,11 +179,15 @@ const resetEditForm = () => {
 let roleFormRefs = ref(null);
 let roleForm = reactive({});
 
-const userHandle = (id) => {
+const userAuthHandle = (id) => {
   roleVisibleDialog.value = true;
   http.get("/sys/user/info/" + id).then((res) => {
-    roleDialogTree.value.setCheckedKeys(res.data.menuIds);
-    roleForm = res.data.info;
+    let roleIds = new Array();
+    res.data.roles.forEach((e) => {
+      roleIds.push(e.id);
+    });
+    roleDialogTree.value.setCheckedKeys(roleIds);
+    roleForm = res.data;
   });
 };
 let resetPasswordFormRefs = ref(null);
@@ -216,15 +217,15 @@ const resetPasswordRule = reactive({
   checkNewPassword: [{ validator: validateRepeatPassword, trigger: "blur" }],
 });
 
-const resetPasswordHandle = ({ id, fullName }) => {
+const resetPasswordHandle = ({ id, username }) => {
   // 亂碼 + email
-  ElMessageBox.confirm(`確認是否繼續重設 "${fullName}" 使用者密碼?`, "提示", {
+  ElMessageBox.confirm(`確認是否繼續重設 "${username}" 使用者密碼?`, "提示", {
     confirmButtonText: "確認",
     cancelButtonText: "取消",
     type: "warning",
   })
     .then(() => {
-      http.post("/sys/user/rest/password/" + id);
+      http.post("/sys/user/repass", id);
       ElMessage({
         type: "success",
         message: "密碼重設成功",
@@ -264,8 +265,8 @@ const submitResetPassword = async (formEl) => {
 
 // TODO 分頁功能
 // pagination
-const currentPage = ref(4);
-const pageSize = ref(10);
+const currentPage = ref(1);
+const pageSize = ref(20);
 const pageSizes = ref([10, 20, 50, 100]);
 const total = ref(0);
 const handleSizeChange = (val) => {
@@ -291,13 +292,12 @@ const roleData = ref([]);
 
 const submitRoleFormHandle = () => {
   let menuIds = roleDialogTree.value.getCheckedKeys();
-  let formData = new FormData();
-  formData.append("menuIds", menuIds);
-  http.post("/sys/user/role/" + roleFormRefs.id, formData).then((res) => {
+  http.post("/sys/user/role/" + roleForm.id, menuIds).then((res) => {
     ElMessage({
       showClose: true,
       type: "success",
       message: "操作成功",
+      duration: 3000,
       onClose: () => {
         getUserList();
       },
@@ -358,7 +358,7 @@ onBeforeMount(() => {
           <el-avatar size="small" :src="scoped.row.avatar"></el-avatar>
         </template>
       </el-table-column>
-      <el-table-column prop="fullName" label="名稱" width="120" />
+      <el-table-column prop="username" label="名稱" width="120" />
       <el-table-column prop="roles" label="角色">
         <template #="scoped">
           <el-tag
@@ -386,7 +386,7 @@ onBeforeMount(() => {
         <template #="scoped">
           <el-button
             type="primary"
-            @click="dialogOpenHandle('userHandle', scoped.row.id)"
+            @click="dialogOpenHandle('userAuthHandle', scoped.row.id)"
             link
             >分配角色</el-button
           >
@@ -441,9 +441,6 @@ onBeforeMount(() => {
         label-width="auto"
         :label-position="labelPosition"
       >
-        <el-form-item label="名稱" prop="fullName">
-          <el-input v-model="editForm.fullName" />
-        </el-form-item>
         <el-form-item label="帳號" prop="username">
           <el-input v-model="editForm.username" />
           <div>初始密碼為: 88888888，新增完畢請盡速修改</div>

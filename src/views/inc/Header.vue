@@ -21,7 +21,7 @@ const token = tokenStore();
 const {resetToken} = token;
 
 function logout() {
-  http.post("/user/logout").then((res) => {
+  http.post("/logout").then((res) => {
     localStorage.clear();
     sessionStorage.clear();
     resetToken();

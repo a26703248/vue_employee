@@ -2,6 +2,7 @@
 import { reactive, ref, onBeforeMount } from "vue";
 import { ElMessage } from "element-plus";
 import http from "@/axios/index.js";
+import qs from "qs";
 
 // table
 let searchForm = reactive({});
@@ -41,7 +42,7 @@ const getRoleList = () => {
 };
 
 const deleteHandle = (id) => {
-  let ids = [];
+  let ids = new Array();
   if (id) {
     ids.push(id);
   } else {
@@ -49,13 +50,12 @@ const deleteHandle = (id) => {
       ids.push(e.id);
     });
   }
-  let data = new FormData();
-  data.append("ids", ids);
-  http.post("/sys/role/delete", data).then((res) => {
+  http.post("/sys/role/delete", ids).then((res) => {
     ElMessage({
       showClose: true,
       message: "操作成功",
       type: "success",
+      duration: 3000,
       onClose: () => {
         getRoleList();
       },
@@ -77,7 +77,6 @@ const dialogOpenHandle = (key, data) => {
     permHandle(data);
   }
 };
-
 
 // form
 const size = ref("default");
@@ -104,7 +103,7 @@ const editRule = reactive({
 
 const editHandle = (id) => {
   http.get("/sys/role/info/" + id).then((res) => {
-    editForm = reactive(res.data.info);
+    editForm = reactive(res.data);
     visibleDialog.value = true;
   });
 };
@@ -151,16 +150,16 @@ let permFormRefs = ref(null);
 let permForm = reactive({});
 
 const permHandle = (id) => {
-    permVisibleDialog.value = true;
-    http.get("/sys/role/info/" + id).then(res => {
-      permDialogTree.value.setCheckedKeys(res.data.menuIds)
-      permForm = res.data.info;
-    })
-}
+  permVisibleDialog.value = true;
+  http.get("/sys/role/info/" + id).then((res) => {
+    permDialogTree.value.setCheckedKeys(res.data.menuIds);
+    permForm = res.data.info;
+  });
+};
 
 // TODO 分頁功能
 // pagination
-const currentPage = ref(4);
+const currentPage = ref(1);
 const pageSize = ref(10);
 const pageSizes = ref([10, 20, 50, 100]);
 const total = ref(0);
@@ -237,19 +236,19 @@ const permData = ref([
 const submitPermFormHandle = () => {
   let menuIds = permDialogTree.value.getCheckedKeys();
   let formData = new FormData();
-  formData.append("menuIds", menuIds)
-  http.post("/sys/role/perm/" + permFormRefs.id, formData).then(res => {
+  formData.append("menuIds", menuIds);
+  http.post("/sys/role/perm/" + permFormRefs.id, formData).then((res) => {
     ElMessage({
-      showClose:true,
-      type:"success",
-      message:"操作成功",
-      onClose:()=> {
+      showClose: true,
+      type: "success",
+      message: "操作成功",
+      onClose: () => {
         getRoleList();
-      }
-    })
+      },
+    });
     permVisibleDialog.value = false;
   });
-}
+};
 
 // life cycle
 onBeforeMount(() => {
@@ -258,7 +257,6 @@ onBeforeMount(() => {
     permData.value = res.data;
   });
 });
-
 </script>
 
 <template>
@@ -276,7 +274,9 @@ onBeforeMount(() => {
         <el-button type="info" @click="getRoleList()">搜索</el-button>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="dialogOpenHandle('save')">新增</el-button>
+        <el-button type="primary" @click="dialogOpenHandle('save')"
+          >新增</el-button
+        >
       </el-form-item>
       <el-form-item>
         <el-popconfirm title="確定是否批量刪除" @confirm="deleteHandle()">

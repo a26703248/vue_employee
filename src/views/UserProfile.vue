@@ -76,7 +76,8 @@
           {{ profileForm.mobile }}
         </el-form-item>
         <el-form-item label="Email" prop="email">
-          <el-input v-model="profileForm.email" />
+          <!-- <el-input v-model="profileForm.email" /> -->
+          {{ profileForm.email }}
         </el-form-item>
 
         <el-form-item class="submit-button">
@@ -98,7 +99,8 @@ import http from "@/axios/index.js";
 import { userAccountStore } from "@/stores/user.js";
 import { storeToRefs } from "pinia";
 import { ElMessage } from "element-plus";
-
+import { useRouter } from "vue-router";
+const router = useRouter();
 
 // login
 const account = userAccountStore();
@@ -159,8 +161,16 @@ const submitForm = async (formEl, formName) => {
     if (valid) {
       switch (formName) {
         case "account":
-          http.post("/user/update/account", (res) => {
-            router.push("/login");
+          http.post("/sys/user/updatePass", loginProfileForm).then((res) => {
+            ElMessage({
+              showClose: true,
+              type: "success",
+              message: "密碼修改成功",
+              duration: 3000,
+              onClose: () => {
+                router.push("/login");
+              },
+            });
           });
           break;
         case "profile":
@@ -175,12 +185,9 @@ const submitForm = async (formEl, formName) => {
   });
 };
 
-
 onBeforeMount(() => {
-  let id = 8;
   // userAccountStore.userAccount;
-  debugger
-  // profileForm = (id);
+  // profileForm = (id;
 });
 </script>
 

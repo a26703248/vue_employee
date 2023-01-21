@@ -40,7 +40,16 @@ const router = createRouter({
 router.beforeEach(async (to, form, next) => {
   let menuItem = menuStore();
   const { menu, hasRouter } = storeToRefs(menuItem);
-  if (!hasRouter.value && localStorage.getItem("token")) {
+  const token = localStorage.getItem("token");
+  if(to.fullPath == '/login'){
+    next();
+  }
+
+  if(!token){
+    next({path:"/login"});
+  }
+
+  if (!hasRouter.value && token) {
     await http.get("/sys/menu/nav").then((resp) => {
       // 取得 menuList
       menuItem.setMenu(resp.data.nav);
