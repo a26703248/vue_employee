@@ -2,6 +2,7 @@
 import { reactive, ref, onBeforeMount } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import http from "@/axios/index.js";
+import { hasAuth } from "@/glob/globalFunc.js";
 
 // table
 let searchForm = reactive({});
@@ -164,15 +165,12 @@ const submitForm = async (formEl) => {
 
 const resetEditForm = () => {
   editForm = reactive({
-    parentId: 1,
-    name: "",
-    perms: "",
-    icon: "",
-    path: "",
-    component: "",
-    type: 0,
+    username: "",
+    password: "",
+    checkPassword: "",
+    email: "",
+    mobile: "",
     status: 1,
-    orderNum: 0,
   });
 };
 
@@ -210,7 +208,6 @@ function validateRepeatPassword(rule, val, callback) {
   }
 }
 
-// TODO 驗證 warning
 const resetPasswordRule = reactive({
   oldPassword: [{ required: true, message: "請輸入舊密碼", trigger: "blur" }],
   newPassword: [{ required: true, message: "請輸入新密碼", trigger: "blur" }],
@@ -263,7 +260,6 @@ const submitResetPassword = async (formEl) => {
   });
 };
 
-// TODO 分頁功能
 // pagination
 const currentPage = ref(1);
 const pageSize = ref(20);
@@ -304,6 +300,7 @@ const submitRoleFormHandle = () => {
     });
     roleVisibleDialog.value = false;
   });
+
 };
 
 // life cycle
@@ -329,12 +326,12 @@ onBeforeMount(() => {
       <el-form-item>
         <el-button type="info" @click="getUserList()">搜索</el-button>
       </el-form-item>
-      <el-form-item>
+      <el-form-item v-if="hasAuth('sys:user:save')">
         <el-button type="primary" @click="dialogOpenHandle('save')"
           >新增</el-button
         >
       </el-form-item>
-      <el-form-item>
+      <el-form-item  v-if="hasAuth('sys:user:delete')">
         <el-popconfirm title="確定是否批量刪除" @confirm="deleteHandle()">
           <template #reference>
             <el-button type="danger" :disabled="batchDeleteDis"
@@ -385,6 +382,7 @@ onBeforeMount(() => {
       <el-table-column prop="action" label="操作" width=" 300">
         <template #="scoped">
           <el-button
+            v-if="hasAuth('sys:user:role')"
             type="primary"
             @click="dialogOpenHandle('userAuthHandle', scoped.row.id)"
             link
@@ -392,6 +390,7 @@ onBeforeMount(() => {
           >
           <el-divider direction="vertical" />
           <el-button
+            v-if="hasAuth('sys:user:repass')"
             type="primary"
             @click="dialogOpenHandle('resetPassword', scoped.row)"
             link
@@ -399,6 +398,7 @@ onBeforeMount(() => {
           >
           <el-divider direction="vertical" />
           <el-button
+            v-if="hasAuth('sys:user:update')"
             type="primary"
             @click="dialogOpenHandle('update', scoped.row.id)"
             link
@@ -406,6 +406,7 @@ onBeforeMount(() => {
           >
           <el-divider direction="vertical" />
           <el-popconfirm
+            v-if="hasAuth('sys:user:delete')"
             title="確定是否刪除"
             @confirm="deleteHandle(scoped.row.id)"
           >

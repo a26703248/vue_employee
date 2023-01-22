@@ -2,35 +2,37 @@ import { defineStore } from "pinia";
 import { reactive, ref, onBeforeMount } from "vue";
 
 export const menuStore = defineStore("menu", () => {
-  const menu = reactive([]);
+  let menu = reactive([]);
   const authorities = ref([]);
-  // const hasRouter = ref(sessionStorage.getItem("hasRoute"));
   const hasRouter = ref(false);
   const activeMenu = ref("Index");
 
-  function setMenu(value) {
+  const setMenu = (value) => {
     menu.push(...value);
   }
 
-  function resetMenu() {
+  const resetMenu = () => {
     menu.splice(0, menu.length);
   }
 
-  function setActiveMenu(value) {
+  const setActiveMenu = (value) => {
     activeMenu.value = value;
   }
 
-  function changeRouterStatus(value) {
+  const changeRouterStatus = (value) => {
     hasRouter.value = value;
-    sessionStorage.setItem("hasRoute", value);
   }
 
-  function setAuthorities(value) {
+  const resetHasRouter = () => {
+    hasRouter.value = false;
+  }
+
+  const setAuthorities = (value) => {
     authorities.value.push(...value);
   }
 
-  function resetAuthorities() {
-    authorities.value.splice(0, authorities.value.length);
+  const resetAuthorities = () => {
+    authorities.value = [];
   }
 
   return {
@@ -44,7 +46,8 @@ export const menuStore = defineStore("menu", () => {
     setMenu,
     resetMenu,
     // dynamic route status
-    hasRouter,
     changeRouterStatus,
+    hasRouter,
+    resetHasRouter,
   };
 });

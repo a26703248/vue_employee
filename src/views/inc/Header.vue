@@ -4,6 +4,7 @@ import { reactive, ref, onBeforeMount } from "vue";
 import { userAccountStore } from "@/stores/user.js";
 import { storeToRefs } from "pinia";
 import { tokenStore } from "@/stores/token.js";
+import { menuStore } from "@/stores/menu.js";
 import { useRouter } from "vue-router";
 import http from "@/axios/index.js";
 import {getUserInfo} from "@/glob/globalFunc.js";
@@ -13,8 +14,11 @@ const router = useRouter();
 
 // account
 const account = userAccountStore();
-const {userAccount} = storeToRefs(account)
+const {userAccount} = storeToRefs(account);
 const {resetUserAccount} = account;
+
+// menu
+const menuItem = menuStore();
 
 // token
 const token = tokenStore();
@@ -26,6 +30,7 @@ function logout() {
     sessionStorage.clear();
     resetToken();
     resetUserAccount();
+    menuItem.resetHasRouter();
     router.push("/login");
   });
 }

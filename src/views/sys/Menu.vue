@@ -2,6 +2,7 @@
 import { ref, reactive, onBeforeMount } from "vue";
 import { ElMessage } from "element-plus";
 import http from "@/axios/index.js";
+import { hasAuth } from "@/glob/globalFunc.js";
 
 // form
 const size = ref("default");
@@ -124,14 +125,13 @@ const getMenuTree = () => {
 onBeforeMount(() => {
   getMenuTree();
 });
-
 </script>
 
 <template>
   <div>
     <!-- table -->
     <el-form :inline="true" class="form-inline">
-      <el-form-item>
+      <el-form-item v-if="hasAuth('sys:menu:save')">
         <el-button type="primary" @click="dialogOpenHandle('save')"
           >新增</el-button
         >
@@ -185,19 +185,20 @@ onBeforeMount(() => {
       <el-table-column prop="action" label="操作">
         <template #="scoped">
           <el-button
+            v-if="hasAuth('sys:menu:update')"
             type="primary"
             @click="dialogOpenHandle('update', scoped.row.id)"
             link
             >編輯</el-button
           >
           <el-divider direction="vertical" />
-          <el-popconfirm title="確定是否刪除" @confirm="deleteHandle(scoped.row.id)">
+          <el-popconfirm
+            v-if="hasAuth('sys:menu:delete')"
+            title="確定是否刪除"
+            @confirm="deleteHandle(scoped.row.id)"
+          >
             <template #reference>
-              <el-button
-                type="primary"
-                link
-                >刪除</el-button
-              >
+              <el-button type="primary" link>刪除</el-button>
             </template>
           </el-popconfirm>
         </template>

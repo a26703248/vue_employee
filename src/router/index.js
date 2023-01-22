@@ -43,18 +43,22 @@ router.beforeEach(async (to, form, next) => {
   const token = localStorage.getItem("token");
   if(to.fullPath == '/login'){
     next();
+    return;
   }
 
   if(!token){
     next({path:"/login"});
+    return;
   }
 
   if (!hasRouter.value && token) {
     await http.get("/sys/menu/nav").then((resp) => {
       // 取得 menuList
+      menuItem.resetMenu();
       menuItem.setMenu(resp.data.nav);
       // 判斷是否有權限
-      menuItem.setAuthorities(resp.data.authorities);
+      menuItem.resetAuthorities
+      menuItem.setAuthorities(resp.data.authorities?.split(","));
       // 動態路由
       resp.data.nav.forEach((menu) => {
         let childrenArr = new Array();
@@ -70,6 +74,7 @@ router.beforeEach(async (to, form, next) => {
       menuItem.changeRouterStatus(true);
     });
     next({...to, replace:true});
+    return;
   } else {
     router.getRoutes().forEach(e => {
       if(e.path == to.fullPath && e.path != "/"){

@@ -1,98 +1,3 @@
-<template>
-  <div class="page-title">個人資訊</div>
-  <div class="profile-form">
-    <div class="form">
-      <el-form
-        ref="loginProfileFormRef"
-        :model="loginProfileForm"
-        :rules="loginProfileRules"
-        label-width="120px"
-        class="account-form"
-        status-icon
-        size="large"
-      >
-        <el-form-item label="使用者帳號">
-          {{ userAccount.username }}
-        </el-form-item>
-        <el-form-item label="舊密碼" prop="oldPassword">
-          <el-input
-            v-model="loginProfileForm.oldPassword"
-            type="password"
-            show-password
-          />
-        </el-form-item>
-        <el-form-item label="新密碼" prop="newPassword">
-          <el-input
-            v-model="loginProfileForm.newPassword"
-            type="password"
-            show-password
-          />
-        </el-form-item>
-        <el-form-item label="確認新密碼" prop="repeatNewPassword">
-          <el-input
-            v-model="loginProfileForm.repeatNewPassword"
-            type="password"
-            show-password
-          />
-        </el-form-item>
-        <el-form-item class="submit-button">
-          <el-button
-            type="primary"
-            @click="submitForm(loginProfileFormRef, 'account')"
-            class="form-button"
-          >
-            送出
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </div>
-    <el-divider direction="vertical" />
-    <div class="form">
-      <el-form
-        ref="profileFormRef"
-        :model="profileForm"
-        :rules="profileRules"
-        label-width="120px"
-        class="detail-form"
-        status-icon
-        size="large"
-      >
-        <el-form-item label="員工編號" prop="employeeId">
-          {{ profileForm.employeeId }}
-        </el-form-item>
-        <el-form-item label="部門" prop="department">
-          {{ profileForm.department }}
-        </el-form-item>
-        <el-form-item label="職務" prop="jobName">
-          {{ profileForm.jobName }}
-        </el-form-item>
-        <el-form-item label="性別" prop="gender">
-          {{ profileForm.gender === "male" ? "男性" : "女性" }}
-        </el-form-item>
-        <el-form-item label="座位電話" prop="seatTel">
-          {{ profileForm.seatTel }}
-        </el-form-item>
-        <el-form-item label="行動電話" prop="mobile">
-          {{ profileForm.mobile }}
-        </el-form-item>
-        <el-form-item label="Email" prop="email">
-          <!-- <el-input v-model="profileForm.email" /> -->
-          {{ profileForm.email }}
-        </el-form-item>
-
-        <el-form-item class="submit-button">
-          <el-button
-            type="primary"
-            @click="submitForm(profileFormRef, 'profile')"
-          >
-            送出
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </div>
-  </div>
-</template>
-
 <script setup>
 import { reactive, ref, onBeforeMount } from "vue";
 import http from "@/axios/index.js";
@@ -105,13 +10,13 @@ const router = useRouter();
 // login
 const account = userAccountStore();
 const { userAccount } = storeToRefs(account);
-const loginProfileFormRef = ref();
-const loginProfileForm = reactive({
+const passwordFormRef = ref();
+const passwordForm = reactive({
   oldPassword: "",
   newPassword: "",
   repeatNewPassword: "",
 });
-const loginProfileRules = reactive({
+const passwordProfileRules = reactive({
   oldPassword: [{ required: true, message: "請輸入密碼", trigger: "blur" }],
   newPassword: [{ required: true, message: "請輸入密碼", trigger: "blur" }],
   repeatNewPassword: [{ validator: validateRepeatPassword, trigger: "blur" }],
@@ -120,39 +25,12 @@ function validateRepeatPassword(rule, val, callback) {
   if (val === "") {
     callback(new Error("確認新密碼是否錯誤"));
   }
-  if (val === loginProfileForm.newPassword) {
+  if (val === passwordForm.newPassword) {
     callback();
   } else {
     callback(new Error("密碼不一致"));
   }
 }
-
-// profile
-const profileFormRef = ref();
-let profileForm = reactive({
-  employeeId: 0,
-  department: "",
-  jobName: "",
-  gender: "",
-  seatTel: "",
-  mobile: "",
-  jobStartDate: "",
-  email: "",
-});
-const profileRules = reactive({
-  email: [
-    {
-      required: true,
-      message: "Email 信箱必填",
-      trigger: "blur",
-    },
-    {
-      type: "email",
-      message: "Email信箱格式錯誤",
-      trigger: ["blur", "change"],
-    },
-  ],
-});
 
 // function
 const submitForm = async (formEl, formName) => {
@@ -161,7 +39,7 @@ const submitForm = async (formEl, formName) => {
     if (valid) {
       switch (formName) {
         case "account":
-          http.post("/sys/user/updatePass", loginProfileForm).then((res) => {
+          http.post("/sys/user/updatePass", passwordForm).then((res) => {
             ElMessage({
               showClose: true,
               type: "success",
@@ -173,11 +51,6 @@ const submitForm = async (formEl, formName) => {
             });
           });
           break;
-        case "profile":
-          http.post("/user/update/profile", (res) => {
-            router.push("/login");
-          });
-          break;
       }
     } else {
       console.log("error submit!", fields);
@@ -185,13 +58,60 @@ const submitForm = async (formEl, formName) => {
   });
 };
 
-onBeforeMount(() => {
-  // userAccountStore.userAccount;
-  // profileForm = (id;
-});
 </script>
 
-<style>
+<template>
+  <div class="page-title">個人資訊</div>
+  <div class="profile-form">
+    <div class="form">
+      <el-form
+        ref="passwordFormRef"
+        :model="passwordForm"
+        :rules="passwordProfileRules"
+        label-width="120px"
+        class="account-form"
+        status-icon
+        size="large"
+      >
+        <el-form-item label="使用者帳號">
+          {{ userAccount.username }}
+        </el-form-item>
+        <el-form-item label="舊密碼" prop="oldPassword">
+          <el-input
+            v-model="passwordForm.oldPassword"
+            type="password"
+            show-password
+          />
+        </el-form-item>
+        <el-form-item label="新密碼" prop="newPassword">
+          <el-input
+            v-model="passwordForm.newPassword"
+            type="password"
+            show-password
+          />
+        </el-form-item>
+        <el-form-item label="確認新密碼" prop="repeatNewPassword">
+          <el-input
+            v-model="passwordForm.repeatNewPassword"
+            type="password"
+            show-password
+          />
+        </el-form-item>
+        <el-form-item class="submit-button">
+          <el-button
+            type="primary"
+            @click="submitForm(passwordFormRef, 'account')"
+            class="form-button"
+          >
+            送出
+          </el-button>
+        </el-form-item>
+      </el-form>
+    </div>
+  </div>
+</template>
+
+<style scoped>
 .submit-button .el-form-item__content {
   justify-content: flex-end;
 }
@@ -208,7 +128,13 @@ onBeforeMount(() => {
   justify-content: center;
 }
 .page-title {
+  height:36px;
   font-size: 36px;
+  display:flex;
+  margin: 10px;
+  flex-wrap: wrap;
+  align-content:center;
+  justify-content:center;
 }
 
 .divider-vertical {

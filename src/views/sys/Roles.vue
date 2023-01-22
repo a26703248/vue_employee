@@ -2,6 +2,7 @@
 import { reactive, ref, onBeforeMount } from "vue";
 import { ElMessage } from "element-plus";
 import http from "@/axios/index.js";
+import { hasAuth } from "@/glob/globalFunc.js";
 import qs from "qs";
 
 // table
@@ -146,18 +147,17 @@ const resetEditForm = () => {
   });
 };
 
-let permFormRefs = ref(null);
+let permFormRefs = reactive(null);
 let permForm = reactive({});
 
 const permHandle = (id) => {
   permVisibleDialog.value = true;
   http.get("/sys/role/info/" + id).then((res) => {
     permDialogTree.value.setCheckedKeys(res.data.menuIds);
-    permForm = res.data.info;
+    permForm = reactive(res.data);
   });
 };
 
-// TODO 分頁功能
 // pagination
 const currentPage = ref(1);
 const pageSize = ref(10);
@@ -235,9 +235,7 @@ const permData = ref([
 
 const submitPermFormHandle = () => {
   let menuIds = permDialogTree.value.getCheckedKeys();
-  let formData = new FormData();
-  formData.append("menuIds", menuIds);
-  http.post("/sys/role/perm/" + permFormRefs.id, formData).then((res) => {
+  http.post("/sys/role/perm/" + permForm.id, menuIds).then((res) => {
     ElMessage({
       showClose: true,
       type: "success",
@@ -273,12 +271,12 @@ onBeforeMount(() => {
       <el-form-item>
         <el-button type="info" @click="getRoleList()">搜索</el-button>
       </el-form-item>
-      <el-form-item>
+      <el-form-item v-if="hasAuth('sys:role:save')">
         <el-button type="primary" @click="dialogOpenHandle('save')"
           >新增</el-button
         >
       </el-form-item>
-      <el-form-item>
+      <el-form-item v-if="hasAuth('sys:role:delete')">
         <el-popconfirm title="確定是否批量刪除" @confirm="deleteHandle()">
           <template #reference>
             <el-button type="danger" :disabled="batchDeleteDis"
@@ -317,6 +315,7 @@ onBeforeMount(() => {
       <el-table-column prop="action" label="操作">
         <template #="scoped">
           <el-button
+            v-if="hasAuth('sys:role:perm')"
             type="primary"
             @click="dialogOpenHandle('permHandle', scoped.row.id)"
             link
@@ -324,6 +323,7 @@ onBeforeMount(() => {
           >
           <el-divider direction="vertical" />
           <el-button
+            v-if="hasAuth('sys:role:update')"
             type="primary"
             @click="dialogOpenHandle('update', scoped.row.id)"
             link
@@ -331,6 +331,7 @@ onBeforeMount(() => {
           >
           <el-divider direction="vertical" />
           <el-popconfirm
+            v-if="hasAuth('sys:role:update')"
             title="確定是否刪除"
             @confirm="deleteHandle(scoped.row.id)"
           >

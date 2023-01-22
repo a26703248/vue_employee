@@ -17,8 +17,6 @@ const route = useRoute();
 const menuItem = menuStore();
 const { menu, activeMenu } = storeToRefs(menuItem);
 const menuList = menu;
-// TODO 網址直接訪問左側標籤高量位置錯誤
-
 
 let iconMap = {
   document: Document,
@@ -67,37 +65,6 @@ let iconMap = {
       </RouterLink>
     </el-sub-menu>
 
-    <!-- <el-sub-menu index="1">
-      <template #title>
-        <el-icon><setting /></el-icon>
-        <span>帳戶管理</span>
-      </template>
-      <RouterLink to="/sys/user">
-        <el-menu-item index="2-1">
-          <el-icon><Lock /></el-icon>
-          <template #title>帳戶設定</template>
-        </el-menu-item>
-      </RouterLink>
-      <RouterLink to="/sys/roles">
-        <el-menu-item index="2-2">
-            <el-icon><UserFilled /></el-icon>
-            <template #title>權限設定</template>
-        </el-menu-item>
-      </RouterLink>
-      <RouterLink to="/sys/menu">
-        <el-menu-item index="2-3">
-          <el-icon><document /></el-icon>
-          <template #title>選單管理</template>
-        </el-menu-item>
-      </RouterLink>
-    </el-sub-menu>
-
-    <el-sub-menu index="2">
-      <template #title>
-        <el-icon><operation /></el-icon>
-        <span>系統工具</span>
-      </template>
-    </el-sub-menu> -->
   </el-menu>
 </template>
 
