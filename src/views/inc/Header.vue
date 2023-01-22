@@ -42,7 +42,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <strong>VueAdmin 後臺管理系統</strong>
+  <strong>員工後臺管理系統</strong>
   <span class="header-avatar">
     <el-avatar :src="userAccount.avatar" />
     <el-dropdown>
