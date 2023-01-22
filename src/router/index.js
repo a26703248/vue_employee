@@ -5,6 +5,7 @@ import {
 } from "vue-router";
 import Home from "@/views/Home.vue";
 import Index from "@/views/Index.vue";
+import Error from "@/views/Error.vue";
 import http from "@/axios/index.js";
 import { menuStore } from "@/stores/menu.js";
 import { storeToRefs } from "pinia";
@@ -34,6 +35,15 @@ const router = createRouter({
       name: "login",
       component: () => import("../views/Login.vue"),
     },
+    {
+      path: "/404",
+      name: "404",
+      component: Error,
+    },
+    // {
+    //   path: "/:catchAll(.*)",
+    //   redirect:"/404"
+    // }
   ],
 });
 

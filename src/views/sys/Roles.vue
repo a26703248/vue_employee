@@ -147,8 +147,9 @@ const resetEditForm = () => {
   });
 };
 
-let permFormRefs = reactive(null);
+let permFormRefs = ref(null);
 let permForm = reactive({});
+const permFlatMap = reactive([]);
 
 const permHandle = (id) => {
   permVisibleDialog.value = true;
@@ -247,12 +248,41 @@ const submitPermFormHandle = () => {
     permVisibleDialog.value = false;
   });
 };
+const selectNode = (item) => {
+  let idArr = new Array();
+  getParentNode(item, idArr);
+  permForm.menuIds.push(...idArr);
+  permDialogTree.value.setCheckedKeys(permForm.menuIds);
+}
+
+const getParentNode = (item, arr) => {
+  arr.push(item.id);
+  if(item.parentId == 0){
+    return;
+  }else{
+    getParentNode(permFlatMap[item.parentId], arr);
+  }
+}
+
+const recursionFlat = (item) => {
+  permFlatMap[item.id] = item;
+  if(item.children.length == 0){
+    return;
+  }else{
+    item.children.forEach(e => {
+      recursionFlat(e);
+    })
+  }
+}
 
 // life cycle
 onBeforeMount(() => {
   getRoleList();
   http.get("/sys/menu/list").then((res) => {
     permData.value = res.data;
+    res.data.forEach(e => {
+      recursionFlat(e)
+    });
   });
 });
 </script>
@@ -402,12 +432,13 @@ onBeforeMount(() => {
       <el-form ref="permFormRefs" v-model="permForm">
         <el-tree
           ref="permDialogTree"
+          show-checkbox
+          node-key="id"
           :props="defaultProps"
           :data="permData"
           :default-expand-all="true"
-          show-checkbox
-          node-key="id"
           :check-strictly="true"
+          @check="selectNode"
         />
       </el-form>
 

@@ -11,9 +11,6 @@ import "./assets/main.css";
 
 const app = createApp(App);
 
-app
-.use(router)
-.use(createPinia())
-.use(ElementPlus);
+app.use(router).use(createPinia()).use(ElementPlus);
 
 app.mount("#app");
