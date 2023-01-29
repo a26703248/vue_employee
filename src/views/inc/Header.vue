@@ -59,7 +59,7 @@ onBeforeMount(() => {
             <el-dropdown-item>個人資訊</el-dropdown-item>
           </RouterLink>
           <!-- <RouterLink to="/userProfile"> -->
-          <el-dropdown-item>休假資訊</el-dropdown-item>
+          <!-- <el-dropdown-item>休假資訊</el-dropdown-item> -->
           <!-- </RouterLink> -->
           <el-dropdown-item @click.prevent.stop="logout()"
             >登出</el-dropdown-item

@@ -5,6 +5,9 @@ import { userAccountStore } from "@/stores/user.js";
 import { storeToRefs } from "pinia";
 import { ElMessage } from "element-plus";
 import { useRouter } from "vue-router";
+import { tokenStore } from "@/stores/token.js";
+import { menuStore } from "@/stores/menu.js";
+
 const router = useRouter();
 
 // login
@@ -34,6 +37,8 @@ function validateRepeatPassword(rule, val, callback) {
 
 // function
 const submitForm = async (formEl, formName) => {
+  const menuItem = menuStore();
+  const token = tokenStore();
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
     if (valid) {
@@ -46,6 +51,11 @@ const submitForm = async (formEl, formName) => {
               message: "密碼修改成功",
               duration: 3000,
               onClose: () => {
+                localStorage.clear();
+                sessionStorage.clear();
+                token.resetToken();
+                token.resetUserAccount();
+                menuItem.resetHasRouter();
                 router.push("/login");
               },
             });
@@ -57,7 +67,6 @@ const submitForm = async (formEl, formName) => {
     }
   });
 };
-
 </script>
 
 <template>
@@ -128,13 +137,13 @@ const submitForm = async (formEl, formName) => {
   justify-content: center;
 }
 .page-title {
-  height:36px;
+  height: 36px;
   font-size: 36px;
-  display:flex;
+  display: flex;
   margin: 10px;
   flex-wrap: wrap;
-  align-content:center;
-  justify-content:center;
+  align-content: center;
+  justify-content: center;
 }
 
 .divider-vertical {

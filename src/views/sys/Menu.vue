@@ -10,7 +10,7 @@ const labelPosition = ref("right");
 let editFormRefs = ref();
 
 let editForm = reactive({
-  parentId: null,
+  parentId: 0,
   name: "",
   perms: "",
   icon: "",
@@ -22,7 +22,7 @@ let editForm = reactive({
 });
 
 const editRule = reactive({
-  parentId: { required: true, message: "請選擇上層選單", trigger: "blur" },
+  parentId: {},
   name: { required: true, message: "請輸入名稱", trigger: "blur" },
   perms: { required: true, message: "請輸入權限代號", trigger: "blur" },
   icon: {},
@@ -68,7 +68,7 @@ const submitForm = async (formEl) => {
 
 const resetEditForm = () => {
   editForm = reactive({
-    parentId: 1,
+    parentId: null,
     name: "",
     perms: "",
     icon: "",
