@@ -248,7 +248,12 @@ const submitPermFormHandle = () => {
     permVisibleDialog.value = false;
   });
 };
-const selectNode = (item) => {
+const selectNode = (item, status) => {
+  if(permForm.menuIds.includes(item.id)){
+    let itemIndex = permForm.menuIds.indexOf(item.id);
+    permForm.menuIds.splice(itemIndex, 1);
+    return;
+  }
   let idArr = new Array();
   getParentNode(item, idArr);
   permForm.menuIds.push(...idArr);
