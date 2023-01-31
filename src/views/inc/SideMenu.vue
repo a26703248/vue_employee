@@ -21,7 +21,9 @@ const menuList = menu;
   >
     <RouterLink to="/index">
       <el-menu-item index="Index">
-        <el-icon><House /></el-icon>
+        <el-icon>
+          <component :is="elementIcon.House" />
+        </el-icon>
         <template #title>首頁</template>
       </el-menu-item>
     </RouterLink>
