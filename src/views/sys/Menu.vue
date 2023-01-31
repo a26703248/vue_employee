@@ -10,7 +10,7 @@ const labelPosition = ref("right");
 let editFormRefs = ref();
 
 let editForm = reactive({
-  parentId: 0,
+  parentId: null,
   name: "",
   perms: "",
   icon: "",
@@ -22,7 +22,6 @@ let editForm = reactive({
 });
 
 const editRule = reactive({
-  parentId: {},
   name: { required: true, message: "請輸入名稱", trigger: "blur" },
   perms: { required: true, message: "請輸入權限代號", trigger: "blur" },
   icon: {},
@@ -42,10 +41,10 @@ const editRule = reactive({
 });
 
 const submitForm = async (formEl) => {
-  console.log(editForm);
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
     if (valid) {
+      if (!editForm.parentId) editForm.parentId = 0;
       http
         .post("/sys/menu/" + (editForm.id ? "update" : "save"), editForm)
         .then((res) => {
@@ -143,7 +142,6 @@ onBeforeMount(() => {
       row-key="id"
       stripe
       border
-      default-expand-all
     >
       <el-table-column prop="name" label="名稱" />
       <el-table-column prop="perms" label="權限代號" />

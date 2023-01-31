@@ -1,13 +1,5 @@
 <script setup>
-import {
-  Document,
-  Menu as IconMenu,
-  House,
-  Setting,
-  Operation,
-  Lock,
-  UserFilled,
-} from "@element-plus/icons-vue";
+import * as elementIcon from "@element-plus/icons-vue";
 import { reactive, ref, computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { menuStore } from "@/stores/menu.js";
@@ -17,16 +9,6 @@ const route = useRoute();
 const menuItem = menuStore();
 const { menu, activeMenu } = storeToRefs(menuItem);
 const menuList = menu;
-
-let iconMap = {
-  document: Document,
-  menu: IconMenu,
-  house: House,
-  setting: Setting,
-  operation: Operation,
-  lock: Lock,
-  userFilled: UserFilled,
-};
 </script>
 
 <template>
@@ -47,7 +29,7 @@ let iconMap = {
     <el-sub-menu :index="menu.name" v-for="menu in menuList" :key="menu.name">
       <template #title>
         <el-icon>
-          <component :is="iconMap[menu.icon]" />
+          <component :is="elementIcon[menu.icon]" />
         </el-icon>
         <span>{{ menu.title }}</span>
       </template>
@@ -58,7 +40,7 @@ let iconMap = {
       >
         <el-menu-item :index="children.name">
           <el-icon>
-            <component :is="iconMap[children.icon]" />
+            <component :is="elementIcon[children.icon]" />
           </el-icon>
           <template #title>{{ children.title }}</template>
         </el-menu-item>

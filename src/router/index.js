@@ -69,6 +69,7 @@ router.beforeEach(async (to, form, next) => {
       // 判斷是否有權限
       menuItem.resetAuthorities
       menuItem.setAuthorities(resp.data.authorities?.split(","));
+
       // 動態路由
       resp.data.nav.forEach((menu) => {
         let childrenArr = new Array();
@@ -97,9 +98,6 @@ router.beforeEach(async (to, form, next) => {
 });
 
 const menuToRoute = (menu) => {
-  if (!menu.component) {
-    return null;
-  }
   let route = {
     path: menu.path,
     name: menu.name,
@@ -107,9 +105,11 @@ const menuToRoute = (menu) => {
     title: menu.title,
   };
   // issue https://github.com/sveltejs/vite-plugin-svelte/issues/175#issuecomment-937431823
-  let comps = import.meta.glob("@/views/**/*.vue");
-  let matchPath = comps[`/src/views/${menu.component}.vue`];
-  route.component = matchPath;
+  if (menu.component) {
+    let comps = import.meta.glob("@/views/**/*.vue");
+    let matchPath = comps[`/src/views/${menu.component}.vue`];
+    route.component = matchPath;
+  }
   return route;
 };
 
