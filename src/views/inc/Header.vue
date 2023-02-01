@@ -42,7 +42,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <strong>員工後臺管理系統</strong>
+  <strong class="title-font">員工後臺管理系統</strong>
   <span class="header-avatar">
     <el-avatar :src="userAccount.avatar" />
     <el-dropdown>
@@ -72,6 +72,9 @@ onBeforeMount(() => {
 
 <style scoped>
 /* header start */
+.title-font {
+  color:white;
+}
 .example-showcase .el-dropdown-link {
   cursor: pointer;
   display: flex;

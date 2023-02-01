@@ -79,31 +79,31 @@ export default [
             title: "帳戶管理",
             name: "AccountMana",
             icon: "setting",
-            component:"",
+            component: "",
             path: "",
-            pathParent:"",
+            pathParent: "",
             children: [
               {
-                pathParent:"home",
+                pathParent: "home",
                 title: "帳戶設定",
                 name: "AccountSetting",
-                component:"sys/User",
+                component: "sys/User",
                 icon: "userFilled",
                 path: "/sys/user",
               },
               {
-                pathParent:"home",
+                pathParent: "home",
                 title: "權限設定",
                 name: "RoleSetting",
-                component:"sys/Roles",
+                component: "sys/Roles",
                 icon: "lock",
                 path: "/sys/roles",
               },
               {
-                pathParent:"home",
+                pathParent: "home",
                 title: "選單設定",
                 name: "MenuSetting",
-                component:"sys/Menu",
+                component: "sys/Menu",
                 icon: "document",
                 path: "/sys/menu",
               },
@@ -113,7 +113,7 @@ export default [
             title: "系統工具",
             name: "SystemTool",
             icon: "operation",
-            component:"",
+            component: "",
             path: "",
             children: [],
           },
@@ -357,6 +357,26 @@ export default [
     url: RegExp("/sys/user/rest/password/*"),
     method: "post",
     response: () => {
+      return RESULT;
+    },
+  },
+  // emp leave
+  {
+    url: "/emp/leave/list",
+    method: "get",
+    response: () => {
+      RESULT.data = [
+        {
+          empName: "OOO",
+          deptName: "資訊部",
+          job: "後端工程師",
+          type: 1,
+          amount: 1000,
+          created: "2023-02-01",
+          updated: "2023-02-01",
+          status: 0,
+        },
+      ];
       return RESULT;
     },
   },
