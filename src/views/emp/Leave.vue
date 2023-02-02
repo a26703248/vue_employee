@@ -8,34 +8,32 @@ import { hasAuth } from "@/glob/globalFunc.js";
 const size = ref("default");
 const labelPosition = ref("right");
 let editFormRefs = ref();
+const tableData = ref([]);
+const formAction = ref("");
+const empOption = ref([]);
+const typeOption = ref([
+  "事假",
+  "病假",
+  "公假",
+  "特休假",
+]);
 
 let searchForm = reactive({});
 
 let editForm = reactive({
-  empName: null,
-  deptName: "",
-  type: 0,
+  type: null,
+  empId: null,
   reason: "",
-  icon: "",
-  path: "",
+  amount: 0,
+  startDate: null,
+  endDate: null,
 });
 
 const editRule = reactive({
-  empName: { required: true, message: "請輸入名稱", trigger: "blur" },
-  deptName: { required: true, message: "請輸入權限代號", trigger: "blur" },
-  icon: {},
-  path: {},
-  component: {},
-  type: {
-    required: true,
-    message: "請選擇類型",
-    trigger: "change",
-  },
-  status: {
-    required: true,
-    message: "請選擇狀態",
-    trigger: "change",
-  },
+  empId: { required: true, message: "請選擇員工", trigger: "blur" },
+  type: { required: true, message: "請選擇請假類型", trigger: "blur" },
+  startDate: { required: true, message: "請選擇開始日期", trigger: "blur" },
+  endDate: { required: true, message: "請選擇開始日期", trigger: "blur" },
 });
 
 const editHandle = (id) => {
@@ -47,18 +45,16 @@ const editHandle = (id) => {
 
 const resetEditForm = () => {
   editForm = reactive({
-    parentId: null,
-    name: "",
-    perms: "",
-    icon: "",
-    path: "",
-    component: "",
-    type: 0,
-    status: 1,
-    orderNum: 0,
+    type: null,
+    empId: null,
+    reason: "",
+    amount: 0,
+    startDate: null,
+    endDate: null,
   });
 };
 
+// TODO 測試取消重置表單
 const cancelForm = (formEl) => {
   debugger;
 };
@@ -68,14 +64,14 @@ const submitForm = async (formEl) => {
   await formEl.validate((valid, fields) => {
     if (valid) {
       http
-        .post("/sys/user/" + (editForm.id ? "update" : "save"), editForm)
+        .post("/emp/leave/" + (editForm.id ? "review" : "save"), editForm)
         .then((res) => {
           ElMessage({
             showClose: true,
             message: "操作成功",
             type: "success",
             onClose: () => {
-              getUserList();
+              getLeaveList();
             },
           });
           visibleDialog.value = false;
@@ -91,16 +87,42 @@ const submitForm = async (formEl) => {
 const formDialog = ref();
 const visibleDialog = ref(false);
 
-const dialogOpenHandle = (action) => {};
+const dialogOpenHandle = (key) => {
+  formAction.value = "";
+  if (key === "save") {
+    formAction.value = "save";
+    resetEditForm();
+    visibleDialog.value = true;
+  } else if (key === "review") {
+    formAction.value = "review";
+    resetEditForm();
+    editHandle(data);
+  }
+};
+
 const getLeaveList = () => {
-  http.get("/leave/list", {
-    params: {
-      empName: searchForm.name,
-      empName: searchForm.dateRange,
-      currentPage: currentPage.value,
-      pageSize: pageSize.value,
-    },
-  });
+  let startDate = null;
+  let endDate = null;
+  if (searchForm.dateRange) {
+    startDate = searchForm.dateRange[0];
+    endDate = searchForm.dateRange[1];
+  }
+  http
+    .get("/emp/leave/list", {
+      params: {
+        empName: searchForm.empName,
+        startDate: startDate,
+        endDate: endDate,
+        currentPage: currentPage.value,
+        pageSize: pageSize.value,
+      },
+    })
+    .then((res) => {
+      tableData.value = res.data.records;
+      pageSize.value = res.data.pageSize;
+      currentPage.value = res.data.currentPage;
+      total.value = res.data.total;
+    });
 };
 
 // pagination
@@ -111,25 +133,28 @@ const total = ref(0);
 const handleSizeChange = (val) => {
   console.log(`${val} items per page`);
   pageSize.value = val;
-  // getLeaveList();
+  getLeaveList();
 };
 
 const handleCurrentChange = (val) => {
   console.log(`current page: ${val}`);
   currentPage.value = val;
-  // getLeaveList();
+  getLeaveList();
 };
 
-// onBeforeMount(() => {
-//   getLeaveList();
-// });
+onBeforeMount(() => {
+  getLeaveList();
+  http.get("/emp/manage/list").then((res) => {
+    empOption.value = res.data.records;
+  });
+});
 </script>
 
 <template>
   <el-form :inline="true" class="form-inline">
     <el-form-item>
       <el-input
-        v-model="searchForm.username"
+        v-model="searchForm.empName"
         placeholder="搜尋名稱"
         clearable
       ></el-input>
@@ -138,6 +163,7 @@ const handleCurrentChange = (val) => {
       <el-date-picker
         v-model="searchForm.dateRange"
         type="daterange"
+        value-format="YYYY-MM-DD"
         range-separator="到"
         start-placeholder="開始日期"
         end-placeholder="結束日期"
@@ -162,22 +188,24 @@ const handleCurrentChange = (val) => {
     border
   >
     <el-table-column prop="empName" label="員工姓名" />
-    <el-table-column prop="deptName" label="部門" />
-    <el-table-column prop="job" label="職務" />
-    <el-table-column prop="type" label="請假類型" />
+    <el-table-column prop="jobName" label="職務" />
+    <el-table-column prop="type" label="請假類型">
+      <template #="scoped">
+      </template>
+    </el-table-column>
     <el-table-column prop="amount" label="申請補助費用" />
     <el-table-column prop="created" label="申請時間" />
     <el-table-column prop="updated" label="審核時間" />
     <el-table-column prop="status" label="狀態">
       <template #="scoped">
-        <el-tag type="error" size="small" v-if="scoped.status == 2">
+        <el-tag type="error" size="small" v-if="scoped.row.status == 2">
           退回
         </el-tag>
-        <el-tag type="success" size="small" v-if="scoped.status == 1">
+        <el-tag type="success" size="small" v-if="scoped.row.status == 1">
           通過
         </el-tag>
-        <el-tag type="warning" size="small" v-if="scoped.status == 0">
-          未審核
+        <el-tag type="warning" size="small" v-if="scoped.row.status == 0">
+          待審核
         </el-tag>
       </template>
     </el-table-column>
@@ -189,14 +217,6 @@ const handleCurrentChange = (val) => {
           @click="dialogOpenHandle('leaveReviewHandle', scoped.row.id)"
           link
           >審核</el-button
-        >
-        <el-divider direction="vertical" />
-        <el-button
-          v-if="hasAuth('emp:leave:update')"
-          type="primary"
-          @click="dialogOpenHandle('leaveUpdateHandle', scoped.row.id)"
-          link
-          >修改</el-button
         >
       </template>
     </el-table-column>
@@ -223,12 +243,51 @@ const handleCurrentChange = (val) => {
       :label-position="labelPosition"
       :size="size"
     >
-      <el-table-column prop="empName" label="員工姓名" />
-      <el-table-column prop="deptName" label="部門" />
-      <el-table-column prop="job" label="職務" />
-      <el-table-column prop="type" label="請假類型" />
-      <el-table-column prop="reason" label="請假原因" />
-      <el-table-column prop="amount" label="申請補助費" />
+      <el-form-item prop="empId" label="員工姓名">
+        <el-select v-model="editForm.empId" placeholder="請選擇員工">
+          <el-option
+            v-for="item in empOption"
+            :key="item.id"
+            :label="item.empName"
+            :value="item.id"
+          />
+        </el-select>
+        <template #="scoped" v-if="formAction === 'review'">
+          {{ scoped.row.empName }}
+        </template>
+      </el-form-item>
+      <el-form-item prop="type" label="請假類型">
+        <el-select v-model="editForm.type" placeholder="請選擇員工">
+          <el-option
+            v-for="(item, index) in typeOption"
+            :key="index"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item prop="reason" label="請假原因">
+        <el-input v-model="editForm.reason" />
+      </el-form-item>
+      <el-form-item prop="amount" label="申請補助費">
+        <el-input-number v-model="editForm.amount" :min="0" />
+      </el-form-item>
+      <el-form-item prop="startDate" label="開始日期">
+        <el-date-picker
+          v-model="editForm.startDate"
+          type="datetime"
+          placeholder="請選擇開始日期"
+          format="YYYY/MM/DD HH:mm:ss"
+        />
+      </el-form-item>
+      <el-form-item prop="endDate" label="開始日期">
+        <el-date-picker
+          v-model="editForm.endDate"
+          type="datetime"
+          placeholder="請選擇結束日期"
+          format="YYYY/MM/DD HH:mm:ss"
+        />
+      </el-form-item>
 
       <!-- button -->
       <el-form-item label-width="80" edit-form-button>
