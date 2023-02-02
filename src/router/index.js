@@ -51,13 +51,13 @@ router.beforeEach(async (to, form, next) => {
   let menuItem = menuStore();
   const { menu, hasRouter } = storeToRefs(menuItem);
   const token = localStorage.getItem("token");
-  if(to.fullPath == '/login'){
+  if (to.fullPath == "/login") {
     next();
     return;
   }
 
-  if(!token){
-    next({path:"/login"});
+  if (!token) {
+    next({ path: "/login" });
     return;
   }
 
@@ -67,7 +67,7 @@ router.beforeEach(async (to, form, next) => {
       menuItem.resetMenu();
       menuItem.setMenu(resp.data.nav);
       // 判斷是否有權限
-      menuItem.resetAuthorities
+      menuItem.resetAuthorities;
       menuItem.setAuthorities(resp.data.authorities?.split(","));
 
       // 動態路由
@@ -84,15 +84,15 @@ router.beforeEach(async (to, form, next) => {
       });
       menuItem.changeRouterStatus(true);
     });
-    next({...to, replace:true});
+    next({ ...to, replace: true });
     return;
   } else {
-    router.getRoutes().forEach(e => {
-      if(e.path == to.fullPath && e.path != "/"){
-        menuItem.setActiveMenu(e.name)
+    router.getRoutes().forEach((e) => {
+      if (e.path == to.fullPath && e.path != "/") {
+        menuItem.setActiveMenu(e.name);
         return;
       }
-    })
+    });
     next();
   }
 });
@@ -104,6 +104,7 @@ const menuToRoute = (menu) => {
     icon: menu.icon,
     title: menu.title,
   };
+
   // issue https://github.com/sveltejs/vite-plugin-svelte/issues/175#issuecomment-937431823
   if (menu.component) {
     let comps = import.meta.glob("@/views/**/*.vue");

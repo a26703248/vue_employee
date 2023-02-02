@@ -80,6 +80,7 @@ const dialogOpenHandle = (key, data) => {
 const labelPosition = ref("right");
 const editFormRefs = ref(null);
 const deptOption = ref([]);
+const deptMap = reactive({})
 
 let editForm = reactive({
   empName: "",
@@ -174,9 +175,12 @@ const handleCurrentChange = (val) => {
 // life cycle
 onBeforeMount(() => {
   getEmpList();
-  // http.get("/emp/department/list").then(res => {
-  //   deptOption.value = res.records;
-  // });
+  http.get("/dept/manage/list").then(res => {
+    deptOption.value = res.data.records;
+    res.data.records.forEach( e => {
+      deptMap[e.id] =  e;
+    })
+  });
 });
 </script>
 
@@ -221,7 +225,11 @@ onBeforeMount(() => {
       <el-table-column prop="empSequence" label="員工編號" width="120" />
       <el-table-column prop="empName" label="員工名稱" width="120" />
       <el-table-column prop="jobName" label="職務" />
-      <el-table-column prop="dept" label="部門" />
+      <el-table-column prop="dept" label="部門">
+        <template #="scoped">
+          {{scoped.row.deptId?deptMap[scoped.row.deptId]?.deptName:""}}
+        </template>
+      </el-table-column>
       <el-table-column prop="mobile" label="行動電話" />
       <el-table-column prop="email" label="Email" />
       <el-table-column prop="created" label="到職日期" />
@@ -271,7 +279,7 @@ onBeforeMount(() => {
     />
     <!-- create form -->
     <el-dialog
-      title="編輯帳號"
+      title="編輯員工"
       ref="formDialog"
       v-model="visibleDialog"
       width="30%"
@@ -293,9 +301,9 @@ onBeforeMount(() => {
           <el-select v-model="editForm.dept" placeholder="請選擇部門">
             <el-option
               v-for="item in deptOption"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              :key="item.id"
+              :label="item.deptName"
+              :value="item.id"
             />
           </el-select>
         </el-form-item>

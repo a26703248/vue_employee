@@ -9,12 +9,11 @@ let searchForm = reactive({});
 const tableData = ref([]);
 const multipleTableRef = ref();
 
-
-const getEmpList = () => {
+const getDeptList = () => {
   http
-    .get("/emp/manage/list", {
+    .get("/dept/manage/list", {
       params: {
-        empName: searchForm.empName,
+        deptName: searchForm.deptName,
         currentPage: currentPage.value,
         pageSize: pageSize.value,
       },
@@ -29,7 +28,6 @@ const getEmpList = () => {
 
 // dialog
 const visibleDialog = ref(false);
-const resetPasswordVisibleDialog = ref(false);
 const dialogOpenHandle = (key, data) => {
   if (key === "save") {
     resetEditForm();
@@ -37,10 +35,6 @@ const dialogOpenHandle = (key, data) => {
   } else if (key === "update") {
     resetEditForm();
     editHandle(data);
-  } else if (key === "userAuthHandle") {
-    userAuthHandle(data);
-  } else if (key === "resetPassword") {
-    resetPasswordHandle(data);
   }
 };
 
@@ -49,53 +43,18 @@ const labelPosition = ref("right");
 const editFormRefs = ref(null);
 
 let editForm = reactive({
-  empName: "",
-  user_id: "",
-  mobile: "",
-  email: "",
+  deptName: "",
+  tel: "",
+  description: "",
   status: 1,
 });
 
-function validateCreatedRepeatPassword(rule, val, callback) {
-  if (val === "") {
-    callback(new Error("確認新密碼是否錯誤"));
-  }
-  if (val === editForm.password) {
-    callback();
-  } else {
-    callback(new Error("密碼不一致"));
-  }
-}
-
-const validateMobile = (rule, val, callback) => {
-  if (val === "") {
-    callback(new Error("確認行動電話格式是否錯誤"));
-  }
-  if (/^09\d{8,10}$/.test(val)) {
-    callback();
-  } else {
-    callback(new Error("確認行動電話格式是否錯誤"));
-  }
-};
-
 const editRule = reactive({
-  username: [{ required: true, message: "請輸入帳號", trigger: "blur" }],
-  password: [{ required: true, message: "請輸入密碼", trigger: "blur" }],
-  checkPassword: [
-    { required: true, message: "請確認密碼", trigger: "blur" },
-    { validator: validateCreatedRepeatPassword, trigger: "blur" },
-  ],
-  email: [
-    { type: "email", message: "Email 格式錯誤", trigger: ["blur", "change"] },
-  ],
-  mobile: [
-    { required: true, message: "請輸入行動電話", trigger: "blur" },
-    { validator: validateMobile, trigger: ["blur", "change"] },
-  ],
+  deptName: [{ required: true, message: "請輸入部門名稱", trigger: "blur" }],
 });
 
 const editHandle = (id) => {
-  http.get("/emp/user/info/" + id).then((res) => {
+  http.get("/dept/manage/info/" + id).then((res) => {
     editForm = reactive(res.data);
     visibleDialog.value = true;
   });
@@ -106,14 +65,14 @@ const submitForm = async (formEl) => {
   await formEl.validate((valid, fields) => {
     if (valid) {
       http
-        .post("/emp/manage/" + (editForm.id ? "update" : "save"), editForm)
+        .post("/dept/manage/" + (editForm.id ? "update" : "save"), editForm)
         .then((res) => {
           ElMessage({
             showClose: true,
             message: "操作成功",
             type: "success",
             onClose: () => {
-              getEmpList();
+              getDeptList();
             },
           });
           visibleDialog.value = false;
@@ -127,11 +86,9 @@ const submitForm = async (formEl) => {
 
 const resetEditForm = () => {
   editForm = reactive({
-    username: "",
-    password: "",
-    checkPassword: "",
-    email: "",
-    mobile: "",
+    deptName: "",
+    tel: "",
+    description: "",
     status: 1,
   });
 };
@@ -144,20 +101,19 @@ const total = ref(0);
 const handleSizeChange = (val) => {
   console.log(`${val} items per page`);
   pageSize.value = val;
-  getEmpList();
+  getDeptList();
 };
 
 const handleCurrentChange = (val) => {
   console.log(`current page: ${val}`);
   currentPage.value = val;
-  getEmpList();
+  getDeptList();
 };
 
 // life cycle
 onBeforeMount(() => {
-  getEmpList();
+  getDeptList();
 });
-
 </script>
 
 <template>
@@ -166,15 +122,15 @@ onBeforeMount(() => {
     <el-form :inline="true" class="form-inline">
       <el-form-item>
         <el-input
-          v-model="searchForm.empName"
+          v-model="searchForm.deptName"
           placeholder="搜尋員工名稱"
           clearable
         ></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="info" @click="getEmpList()">搜索</el-button>
+        <el-button type="info" @click="getDeptList()">搜索</el-button>
       </el-form-item>
-      <el-form-item v-if="hasAuth('emp:manage:save')">
+      <el-form-item v-if="hasAuth('dept:manage:save')">
         <el-button type="primary" @click="dialogOpenHandle('save')"
           >新增</el-button
         >
@@ -186,42 +142,33 @@ onBeforeMount(() => {
       style="width: 100%"
       stripe
       border
-      @selection-change="handleSelectionChange"
     >
-      <!-- <el-table-column type="selection" width="55" /> -->
-      <el-table-column prop="empSequence" label="員工編號" width="120" />
-      <el-table-column prop="empName" label="員工名稱" width="120" />
-      <el-table-column prop="jobName" label="職務" />
-      <el-table-column prop="dept" label="部門" />
-      <el-table-column prop="account.mobile" label="行動電話" />
-      <el-table-column prop="account.created" label="到職日期" />
-      <el-table-column prop="account.updated" label="更新日期" />
-      <el-table-column prop="account.username" label="使用帳號" />
-      <el-table-column prop="account.status" label="狀態">
+      <el-table-column prop="deptSequence" label="部門編號" width="120" />
+      <el-table-column prop="deptName" label="部門名稱" width="120" />
+      <el-table-column prop="tel" label="聯絡電話" />
+      <el-table-column prop="description" label="敘述" />
+      <el-table-column prop="created" label="建立日期" />
+      <el-table-column prop="updated" label="更新日期" />
+      <el-table-column prop="status" label="狀態">
         <template #="scoped">
-          <el-tag type="success" size="small" v-if="scoped.row.account.status === 1"
+          <el-tag
+            type="success"
+            size="small"
+            v-if="scoped.row.status === 1"
             >正常</el-tag
           >
-          <el-tag type="error" size="small" v-else-if="scoped.row.account.status === 0"
+          <el-tag
+            type="error"
+            size="small"
+            v-else-if="scoped.row.status === 0"
             >禁止</el-tag
           >
         </template>
       </el-table-column>
-      <el-table-column prop="action" label="操作" width=" 300">
+      <el-table-column prop="action" label="操作" width="90">
         <template #="scoped">
-          <span
-            v-if="hasAuth('emp:manage:role')"
-          >
           <el-button
-            type="primary"
-            @click="dialogOpenHandle('userAuthHandle', scoped.row.id)"
-            link
-            >選擇帳號</el-button
-          >
-          <el-divider direction="vertical" />
-          </span>
-          <el-button
-            v-if="hasAuth('emp:manage:update')"
+            v-if="hasAuth('dept:manage:update')"
             type="primary"
             @click="dialogOpenHandle('update', scoped.row.id)"
             link
@@ -255,8 +202,8 @@ onBeforeMount(() => {
         label-width="auto"
         :label-position="labelPosition"
       >
-        <el-form-item label="員工姓名" prop="empName">
-          <el-input v-model="editForm.empName" />
+        <el-form-item label="員工姓名" prop="deptName">
+          <el-input v-model="editForm.deptName" />
         </el-form-item>
         <el-form-item label="職務" prop="jobName">
           <el-input v-model="editForm.jobName" />
