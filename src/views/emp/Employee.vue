@@ -85,7 +85,7 @@ const deptMap = reactive({})
 let editForm = reactive({
   empName: "",
   user_id: "",
-  dept: null,
+  deptId: null,
   mobile: "",
   email: "",
   jobName: "",
@@ -105,6 +105,7 @@ const validateMobile = (rule, val, callback) => {
 
 const editRule = reactive({
   empName: [{ required: true, message: "請輸入員工名稱", trigger: "blur" }],
+  deptId: [{ required: true, message: "請選擇部門", trigger: "blur" }],
   jobName: [{ required: true, message: "請輸入職務", trigger: "blur" }],
   email: [
     { type: "email", message: "Email 格式錯誤", trigger: ["blur", "change"] },
@@ -225,7 +226,7 @@ onBeforeMount(() => {
       <el-table-column prop="empSequence" label="員工編號" width="120" />
       <el-table-column prop="empName" label="員工名稱" width="120" />
       <el-table-column prop="jobName" label="職務" />
-      <el-table-column prop="dept" label="部門">
+      <el-table-column prop="deptId" label="部門">
         <template #="scoped">
           {{scoped.row.deptId?deptMap[scoped.row.deptId]?.deptName:""}}
         </template>
@@ -297,8 +298,8 @@ onBeforeMount(() => {
         <el-form-item label="職務" prop="jobName">
           <el-input v-model="editForm.jobName" />
         </el-form-item>
-        <el-form-item label="部門" prop="dept">
-          <el-select v-model="editForm.dept" placeholder="請選擇部門">
+        <el-form-item label="部門" prop="deptId">
+          <el-select v-model="editForm.deptId" placeholder="請選擇部門">
             <el-option
               v-for="item in deptOption"
               :key="item.id"

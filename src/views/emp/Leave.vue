@@ -11,12 +11,7 @@ let editFormRefs = ref();
 const tableData = ref([]);
 const formAction = ref("");
 const empOption = ref([]);
-const typeOption = ref([
-  "事假",
-  "病假",
-  "公假",
-  "特休假",
-]);
+const typeOption = ref(["事假", "病假", "公假", "特休假"]);
 
 let searchForm = reactive({});
 
@@ -56,7 +51,8 @@ const resetEditForm = () => {
 
 // TODO 測試取消重置表單
 const cancelForm = (formEl) => {
-  debugger;
+  formEl.resetFields();
+  visibleDialog.value = false;
 };
 
 const submitForm = async (formEl) => {
@@ -87,7 +83,7 @@ const submitForm = async (formEl) => {
 const formDialog = ref();
 const visibleDialog = ref(false);
 
-const dialogOpenHandle = (key) => {
+const dialogOpenHandle = (key, data) => {
   formAction.value = "";
   if (key === "save") {
     formAction.value = "save";
@@ -190,12 +186,11 @@ onBeforeMount(() => {
     <el-table-column prop="empName" label="員工姓名" />
     <el-table-column prop="jobName" label="職務" />
     <el-table-column prop="type" label="請假類型">
-      <template #="scoped">
-      </template>
+      <template #="scoped"> </template>
     </el-table-column>
     <el-table-column prop="amount" label="申請補助費用" />
-    <el-table-column prop="created" label="申請時間" />
-    <el-table-column prop="updated" label="審核時間" />
+    <el-table-column prop="startDate" label="開始時間" />
+    <el-table-column prop="endDate" label="結束時間" />
     <el-table-column prop="status" label="狀態">
       <template #="scoped">
         <el-tag type="error" size="small" v-if="scoped.row.status == 2">
@@ -214,7 +209,7 @@ onBeforeMount(() => {
         <el-button
           v-if="hasAuth('emp:leave:review')"
           type="primary"
-          @click="dialogOpenHandle('leaveReviewHandle', scoped.row.id)"
+          @click="dialogOpenHandle('review', scoped.row.id)"
           link
           >審核</el-button
         >
@@ -244,7 +239,11 @@ onBeforeMount(() => {
       :size="size"
     >
       <el-form-item prop="empId" label="員工姓名">
-        <el-select v-model="editForm.empId" placeholder="請選擇員工">
+        <el-select
+          v-model="editForm.empId"
+          placeholder="請選擇員工"
+          v-if="formAction === 'save'"
+        >
           <el-option
             v-for="item in empOption"
             :key="item.id"
@@ -252,12 +251,16 @@ onBeforeMount(() => {
             :value="item.id"
           />
         </el-select>
-        <template #="scoped" v-if="formAction === 'review'">
-          {{ scoped.row.empName }}
-        </template>
+        <span v-if="formAction === 'review'">
+          {{ editForm.empName }}
+        </span>
       </el-form-item>
       <el-form-item prop="type" label="請假類型">
-        <el-select v-model="editForm.type" placeholder="請選擇員工">
+        <el-select
+          v-model="editForm.type"
+          placeholder="請選擇員工"
+          v-if="formAction === 'save'"
+        >
           <el-option
             v-for="(item, index) in typeOption"
             :key="index"
@@ -265,28 +268,56 @@ onBeforeMount(() => {
             :value="item"
           />
         </el-select>
+        <span v-if="formAction === 'review'">
+          {{ editForm.type }}
+        </span>
       </el-form-item>
       <el-form-item prop="reason" label="請假原因">
-        <el-input v-model="editForm.reason" />
+        <el-input v-model="editForm.reason" v-if="formAction === 'save'" />
+        <span v-if="formAction === 'review'">
+          {{ editForm.reason }}
+        </span>
       </el-form-item>
       <el-form-item prop="amount" label="申請補助費">
-        <el-input-number v-model="editForm.amount" :min="0" />
+        <el-input-number
+          v-model="editForm.amount"
+          :min="0"
+          v-if="formAction === 'save'"
+        />
+        <span v-if="formAction === 'review'">
+          {{ editForm.amount }}
+        </span>
       </el-form-item>
       <el-form-item prop="startDate" label="開始日期">
         <el-date-picker
+          v-if="formAction === 'save'"
           v-model="editForm.startDate"
           type="datetime"
           placeholder="請選擇開始日期"
           format="YYYY/MM/DD HH:mm:ss"
         />
+        <span v-if="formAction === 'review'">
+          {{ editForm.startDate }}
+        </span>
       </el-form-item>
-      <el-form-item prop="endDate" label="開始日期">
+      <el-form-item prop="endDate" label="結束日期">
         <el-date-picker
+          v-if="formAction === 'save'"
           v-model="editForm.endDate"
           type="datetime"
           placeholder="請選擇結束日期"
           format="YYYY/MM/DD HH:mm:ss"
         />
+        <span v-if="formAction === 'review'">
+          {{ editForm.endDate }}
+        </span>
+      </el-form-item>
+      <el-form-item label="審核" prop="status" v-if="formAction === 'review'">
+        <el-radio-group v-model="editForm.status">
+          <el-radio :label="0">待審核</el-radio>
+          <el-radio :label="1">通過</el-radio>
+          <el-radio :label="2">退回</el-radio>
+        </el-radio-group>
       </el-form-item>
 
       <!-- button -->

@@ -41,6 +41,8 @@ http.interceptors.response.use(
     }
     let msg = null;
     switch (error.response.status) {
+      case 400:
+        msg = "請求驗證錯誤";
       case 401:
         msg = "權限不足";
         break;
