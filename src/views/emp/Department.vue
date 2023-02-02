@@ -6,23 +6,9 @@ import { hasAuth } from "@/glob/globalFunc.js";
 
 // table
 let searchForm = reactive({});
-const batchDeleteDis = ref(true);
 const tableData = ref([]);
 const multipleTableRef = ref();
-const multipleSelection = ref([]);
-const toggleSelection = (rows) => {
-  if (rows) {
-    rows.forEach((row) => {
-      multipleTableRef.value.toggleRowSelection(row, undefined);
-    });
-  } else {
-    multipleTableRef.value.clearSelection();
-  }
-};
-const handleSelectionChange = (val) => {
-  multipleSelection.value = val;
-  batchDeleteDis.value = multipleSelection.value.length == 0;
-};
+
 
 const getEmpList = () => {
   http
@@ -41,55 +27,45 @@ const getEmpList = () => {
     });
 };
 
-const deleteHandle = (id) => {
-  let ids = [];
-  if (id) {
-    ids.push(id);
-  } else {
-    multipleSelection.value.forEach((e) => {
-      ids.push(e.id);
-    });
-  }
-  http.post("/emp/manage/delete", ids).then((res) => {
-    ElMessage({
-      showClose: true,
-      message: "操作成功",
-      type: "success",
-      duration: 3000,
-      onClose: () => {
-        getEmpList();
-      },
-    });
-  });
-};
-
 // dialog
 const visibleDialog = ref(false);
 const resetPasswordVisibleDialog = ref(false);
 const dialogOpenHandle = (key, data) => {
-  if (key === "update") {
-    resetEditForm();
-    editHandle(data);
-  }else if(key === "save"){
+  if (key === "save") {
     resetEditForm();
     visibleDialog.value = true;
+  } else if (key === "update") {
+    resetEditForm();
+    editHandle(data);
+  } else if (key === "userAuthHandle") {
+    userAuthHandle(data);
+  } else if (key === "resetPassword") {
+    resetPasswordHandle(data);
   }
 };
 
 // form
 const labelPosition = ref("right");
 const editFormRefs = ref(null);
-const deptOption = ref([]);
 
 let editForm = reactive({
   empName: "",
   user_id: "",
-  dept: null,
   mobile: "",
   email: "",
-  jobName: "",
   status: 1,
 });
+
+function validateCreatedRepeatPassword(rule, val, callback) {
+  if (val === "") {
+    callback(new Error("確認新密碼是否錯誤"));
+  }
+  if (val === editForm.password) {
+    callback();
+  } else {
+    callback(new Error("密碼不一致"));
+  }
+}
 
 const validateMobile = (rule, val, callback) => {
   if (val === "") {
@@ -103,8 +79,12 @@ const validateMobile = (rule, val, callback) => {
 };
 
 const editRule = reactive({
-  empName: [{ required: true, message: "請輸入員工名稱", trigger: "blur" }],
-  jobName: [{ required: true, message: "請輸入職務", trigger: "blur" }],
+  username: [{ required: true, message: "請輸入帳號", trigger: "blur" }],
+  password: [{ required: true, message: "請輸入密碼", trigger: "blur" }],
+  checkPassword: [
+    { required: true, message: "請確認密碼", trigger: "blur" },
+    { validator: validateCreatedRepeatPassword, trigger: "blur" },
+  ],
   email: [
     { type: "email", message: "Email 格式錯誤", trigger: ["blur", "change"] },
   ],
@@ -115,7 +95,7 @@ const editRule = reactive({
 });
 
 const editHandle = (id) => {
-  http.get("/emp/manage/info/" + id).then((res) => {
+  http.get("/emp/user/info/" + id).then((res) => {
     editForm = reactive(res.data);
     visibleDialog.value = true;
   });
@@ -125,17 +105,19 @@ const submitForm = async (formEl) => {
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
     if (valid) {
-      http.post("/emp/manage/" + (editForm.id?"update":"save"), editForm).then((res) => {
-        ElMessage({
-          showClose: true,
-          message: "操作成功",
-          type: "success",
-          onClose: () => {
-            getEmpList();
-          },
+      http
+        .post("/emp/manage/" + (editForm.id ? "update" : "save"), editForm)
+        .then((res) => {
+          ElMessage({
+            showClose: true,
+            message: "操作成功",
+            type: "success",
+            onClose: () => {
+              getEmpList();
+            },
+          });
+          visibleDialog.value = false;
         });
-        visibleDialog.value = false;
-      });
     } else {
       console.log("error submit!", fields);
       return false;
@@ -145,11 +127,11 @@ const submitForm = async (formEl) => {
 
 const resetEditForm = () => {
   editForm = reactive({
-    empName: "",
-    user_id: "",
-    mobile: "",
+    username: "",
+    password: "",
+    checkPassword: "",
     email: "",
-    jobName: "",
+    mobile: "",
     status: 1,
   });
 };
@@ -174,10 +156,8 @@ const handleCurrentChange = (val) => {
 // life cycle
 onBeforeMount(() => {
   getEmpList();
-  // http.get("/emp/department/list").then(res => {
-  //   deptOption.value = res.records;
-  // });
 });
+
 </script>
 
 <template>
@@ -199,15 +179,6 @@ onBeforeMount(() => {
           >新增</el-button
         >
       </el-form-item>
-      <el-form-item v-if="hasAuth('emp:manage:delete')">
-        <el-popconfirm title="確定是否批量刪除" @confirm="deleteHandle()">
-          <template #reference>
-            <el-button type="danger" :disabled="batchDeleteDis"
-              >批量刪除</el-button
-            >
-          </template>
-        </el-popconfirm>
-      </el-form-item>
     </el-form>
     <el-table
       ref="multipleTableRef"
@@ -217,27 +188,38 @@ onBeforeMount(() => {
       border
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="55" />
+      <!-- <el-table-column type="selection" width="55" /> -->
       <el-table-column prop="empSequence" label="員工編號" width="120" />
       <el-table-column prop="empName" label="員工名稱" width="120" />
       <el-table-column prop="jobName" label="職務" />
       <el-table-column prop="dept" label="部門" />
-      <el-table-column prop="mobile" label="行動電話" />
-      <el-table-column prop="email" label="Email" />
-      <el-table-column prop="created" label="到職日期" />
-      <el-table-column prop="updated" label="更新日期" />
-      <el-table-column prop="status" label="狀態" width="70">
+      <el-table-column prop="account.mobile" label="行動電話" />
+      <el-table-column prop="account.created" label="到職日期" />
+      <el-table-column prop="account.updated" label="更新日期" />
+      <el-table-column prop="account.username" label="使用帳號" />
+      <el-table-column prop="account.status" label="狀態">
         <template #="scoped">
-          <el-tag type="success" size="small" v-if="scoped.row.status === 1"
+          <el-tag type="success" size="small" v-if="scoped.row.account.status === 1"
             >正常</el-tag
           >
-          <el-tag type="error" size="small" v-else-if="scoped.row.status === 0"
+          <el-tag type="error" size="small" v-else-if="scoped.row.account.status === 0"
             >禁止</el-tag
           >
         </template>
       </el-table-column>
-      <el-table-column prop="action" label="操作" width="150">
+      <el-table-column prop="action" label="操作" width=" 300">
         <template #="scoped">
+          <span
+            v-if="hasAuth('emp:manage:role')"
+          >
+          <el-button
+            type="primary"
+            @click="dialogOpenHandle('userAuthHandle', scoped.row.id)"
+            link
+            >選擇帳號</el-button
+          >
+          <el-divider direction="vertical" />
+          </span>
           <el-button
             v-if="hasAuth('emp:manage:update')"
             type="primary"
@@ -245,16 +227,6 @@ onBeforeMount(() => {
             link
             >編輯</el-button
           >
-          <el-divider direction="vertical" />
-          <el-popconfirm
-            v-if="hasAuth('emp:manage:delete')"
-            title="確定是否刪除"
-            @confirm="deleteHandle(scoped.row.id)"
-          >
-            <template #reference>
-              <el-button type="primary" link>刪除</el-button>
-            </template>
-          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -271,7 +243,7 @@ onBeforeMount(() => {
     />
     <!-- create form -->
     <el-dialog
-      title="編輯帳號"
+      title="新增帳號"
       ref="formDialog"
       v-model="visibleDialog"
       width="30%"
@@ -288,16 +260,6 @@ onBeforeMount(() => {
         </el-form-item>
         <el-form-item label="職務" prop="jobName">
           <el-input v-model="editForm.jobName" />
-        </el-form-item>
-        <el-form-item label="部門" prop="dept">
-          <el-select v-model="editForm.dept" placeholder="請選擇部門">
-            <el-option
-              v-for="item in deptOption"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
         </el-form-item>
         <el-form-item label="行動電話" prop="mobile">
           <el-input v-model="editForm.mobile" />

@@ -89,8 +89,6 @@ let editForm = reactive({
   username: "",
   password: "",
   checkPassword: "",
-  email: "",
-  mobile: "",
   status: 1,
 });
 
@@ -105,30 +103,12 @@ function validateCreatedRepeatPassword(rule, val, callback) {
   }
 }
 
-const validateMobile = (rule, val, callback) => {
-  if (val === "") {
-    callback(new Error("確認行動電話格式是否錯誤"));
-  }
-  if (/^09\d{8,10}$/.test(val)) {
-    callback();
-  } else {
-    callback(new Error("確認行動電話格式是否錯誤"));
-  }
-};
-
 const editRule = reactive({
   username: [{ required: true, message: "請輸入帳號", trigger: "blur" }],
   password: [{ required: true, message: "請輸入密碼", trigger: "blur" }],
   checkPassword: [
     { required: true, message: "請確認密碼", trigger: "blur" },
     { validator: validateCreatedRepeatPassword, trigger: "blur" },
-  ],
-  email: [
-    { type: "email", message: "Email 格式錯誤", trigger: ["blur", "change"] },
-  ],
-  mobile: [
-    { required: true, message: "請輸入行動電話", trigger: "blur" },
-    { validator: validateMobile, trigger: ["blur", "change"] },
   ],
 });
 
@@ -366,8 +346,6 @@ onBeforeMount(() => {
           >
         </template>
       </el-table-column>
-      <el-table-column prop="email" label="Email" />
-      <el-table-column prop="mobile" label="行動電話" />
       <el-table-column prop="status" label="狀態">
         <template #="scoped">
           <el-tag type="success" size="small" v-if="scoped.row.status === 1"
@@ -397,14 +375,14 @@ onBeforeMount(() => {
             >重設密碼</el-button
           >
           <el-divider direction="vertical" />
-          <el-button
+          <!-- <el-button
             v-if="hasAuth('sys:user:update')"
             type="primary"
             @click="dialogOpenHandle('update', scoped.row.id)"
             link
             >編輯</el-button
           >
-          <el-divider direction="vertical" />
+          <el-divider direction="vertical" /> -->
           <el-popconfirm
             v-if="hasAuth('sys:user:delete')"
             title="確定是否刪除"
@@ -456,19 +434,12 @@ onBeforeMount(() => {
             show-password
           />
         </el-form-item>
-        <el-form-item label="Email" prop="email">
-          <el-input v-model="editForm.email" />
-        </el-form-item>
-        <el-form-item label="行動電話" prop="mobile">
-          <el-input v-model="editForm.mobile" />
-        </el-form-item>
         <el-form-item label="狀態" prop="status">
           <el-radio-group v-model="editForm.status">
             <el-radio :label="1">正常</el-radio>
             <el-radio :label="0">禁用</el-radio>
           </el-radio-group>
         </el-form-item>
-
         <!-- button -->
         <el-form-item label-width="80" edit-form-button>
           <el-button @click="visibleDialog = false">取消</el-button>
