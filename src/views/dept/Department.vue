@@ -190,7 +190,7 @@ onBeforeMount(() => {
     />
     <!-- create form -->
     <el-dialog
-      title="新增帳號"
+      title="編輯部門"
       ref="formDialog"
       v-model="visibleDialog"
       width="30%"
@@ -202,17 +202,14 @@ onBeforeMount(() => {
         label-width="auto"
         :label-position="labelPosition"
       >
-        <el-form-item label="員工姓名" prop="deptName">
+        <el-form-item label="部門名稱" prop="deptName">
           <el-input v-model="editForm.deptName" />
         </el-form-item>
-        <el-form-item label="職務" prop="jobName">
-          <el-input v-model="editForm.jobName" />
+        <el-form-item label="聯絡電話" prop="tel">
+          <el-input v-model="editForm.tel" />
         </el-form-item>
-        <el-form-item label="行動電話" prop="mobile">
-          <el-input v-model="editForm.mobile" />
-        </el-form-item>
-        <el-form-item label="Email" prop="email">
-          <el-input v-model="editForm.email" />
+        <el-form-item label="敘述" prop="description">
+          <el-input v-model="editForm.description" />
         </el-form-item>
         <el-form-item label="狀態" prop="status">
           <el-radio-group v-model="editForm.status">
@@ -222,10 +219,12 @@ onBeforeMount(() => {
         </el-form-item>
         <!-- button -->
         <el-form-item label-width="80" edit-form-button>
+          <template #="scoped">
           <el-button @click="visibleDialog = false">取消</el-button>
           <el-button type="primary" @click="submitForm(editFormRefs)"
-            >新增</el-button
+            >送出</el-button
           >
+          </template>
         </el-form-item>
       </el-form>
     </el-dialog>

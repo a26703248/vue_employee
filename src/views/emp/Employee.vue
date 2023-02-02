@@ -323,7 +323,7 @@ onBeforeMount(() => {
         <el-form-item label-width="80" edit-form-button>
           <el-button @click="visibleDialog = false">取消</el-button>
           <el-button type="primary" @click="submitForm(editFormRefs)"
-            >新增</el-button
+            >送出</el-button
           >
         </el-form-item>
       </el-form>
